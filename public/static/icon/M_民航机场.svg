@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="30px" height="30px"
+ viewBox="0 0 517 517"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny">
+<title>SVG Generator Example Drawing</title>
+<desc>An SVG drawing created by the SVG Generator Example provided with Qt.</desc>
+<defs>
+</defs>
+<g fill="#ff0000" fill-opacity="0.1" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="#ff0000" stroke-opacity="1" stroke-width="28" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M504,259 C504,394.31 394.31,504 259,504 C123.69,504 14,394.31 14,259 C14,123.69 123.69,14 259,14 C394.31,14 504,123.69 504,259 "/>
+</g>
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M457,258.5 C457,368.129 368.129,457 258.5,457 C148.871,457 60,368.129 60,258.5 C60,148.871 148.871,60 258.5,60 C368.129,60 457,148.871 457,258.5 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M279,262.5 C279,368.263 270.046,454 259,454 C247.954,454 239,368.263 239,262.5 C239,156.737 247.954,71 259,71 C270.046,71 279,156.737 279,262.5 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M442,200 C442,208.837 359.844,216 258.5,216 C157.156,216 75,208.837 75,200 C75,191.163 157.156,184 258.5,184 C359.844,184 442,191.163 442,200 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M342,424 C342,428.418 304.616,432 258.5,432 C212.384,432 175,428.418 175,424 C175,419.582 212.384,416 258.5,416 C304.616,416 342,419.582 342,424 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M153,187 C153,200.255 149.194,211 144.5,211 C139.806,211 136,200.255 136,187 C136,173.745 139.806,163 144.5,163 C149.194,163 153,173.745 153,187 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M381,187 C381,200.255 377.194,211 372.5,211 C367.806,211 364,200.255 364,187 C364,173.745 367.806,163 372.5,163 C377.194,163 381,173.745 381,187 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M211,183.5 C211,196.479 207.194,207 202.5,207 C197.806,207 194,196.479 194,183.5 C194,170.521 197.806,160 202.5,160 C207.194,160 211,170.521 211,183.5 "/>
+</g>
+
+<g fill="#0000ff00" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M323,183.5 C323,196.479 319.194,207 314.5,207 C309.806,207 306,196.479 306,183.5 C306,170.521 309.806,160 314.5,160 C319.194,160 323,170.521 323,183.5 "/>
+</g>
+</g>
+</svg>

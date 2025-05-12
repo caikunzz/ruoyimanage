@@ -1,0 +1,71 @@
+{
+  "name": "ces_vue",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@open-wc/webpack-import-meta-loader": "^0.4.7",
+    "axios": "^1.3.5",
+    "cannon": "^0.6.2",
+    "cesium": "^1.108.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "core-js": "^3.8.3",
+    "element-ui": "^0.2.6",
+    "file-saver": "^2.0.5",
+    "jsencrypt": "^3.3.2",
+    "less": "^3.13.1",
+    "less-loader": "^11.1.3",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "recordrtc": "^5.6.2",
+    "vue": "^3.5.13",
+    "vue-contextmenu": "^1.5.6",
+    "vue-draggable-resizable": "^2.3.0",
+    "vue-router": "^3.5.1",
+    "vuex": "^4.1.0",
+    "webpack": "^5.75.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "^3.12.1",
+    "@vue/cli-plugin-eslint": "^3.12.1",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "vue-template-compiler": "^2.3.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {
+      "vue/multi-word-component-names": "off"
+    },
+    "ignorePatterns": [
+      "src/plugins/cesiumHelper/lib",
+      "src/plugins/cesiumHelper/src/plotting/thirdPart"
+    ]
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

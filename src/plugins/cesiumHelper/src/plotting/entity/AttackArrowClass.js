@@ -1,0 +1,879 @@
+import * as plottingUtils from "../../common/plottingUtils";
+import toolTips from "../../common/reminderTip";
+import * as uuid from "../../common/uuid"
+import * as dateUtils from "../../common/dateUtils";
+
+import * as locationUtils from "../../common/locationUtil"
+import {gradientMaterial} from "../material/canvasMaterial";
+import {setGlowLine, setLineMaterial} from "../material/officialMaterial";
+import {colorFormat} from "../color/colorFormat";
+import '../thirdPart/algorithm';
+import '../thirdPart/plotUtil';
+import {
+    getAttackArrowPoints,
+    lockingMap,
+    updateEntityToStaticProperties
+} from "../tool/plottingTools";
+import {bezierSpline, lineString} from "../../../lib/turf.min";
+
+
+const Cesium = window.Cesium
+
+/**
+ * 创建进攻箭头标绘类
+ */
+class AttackArrowClass {
+    viewer = null
+
+    constructor(viewer) {
+        this.viewer = viewer
+    }
+
+    /**
+     * 创建进攻箭头标绘
+     * @param {Array} [options]  相关参数
+     */
+    createAttackArrow(options) {
+        return new Promise((resolve, reject) => {
+            const id = options.id || uuid.uuid();
+            const exist = this.viewer.entities.getById(id)
+            if (exist) reject(exist);
+            const handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+            let anchorpoints = [];
+            let showLinePoints = []
+            let attackArrow = undefined;
+            let line = undefined;
+            let showLine = true
+            window.toolTip = '点击鼠标左键开始绘制, 按ESC取消标绘';
+            //左键点击事件
+            handler.setInputAction((event) => {
+                window.toolTip = '左键添加点，右键撤销，双击鼠标左键或按回车键结束绘制, 按ESC取消标绘';
+                let cartesian = plottingUtils.getCatesian3FromPX(this.viewer, event.position);
+                if (!cartesian) return;
+                anchorpoints.push(cartesian);
+                if (showLinePoints.length === 0 && showLine) {
+                    showLinePoints.push(cartesian)
+                    line = this.viewer.entities.add({
+                        polyline: {
+                            positions: new Cesium.CallbackProperty(function () {
+                                return showLinePoints;
+                            }, false),
+                            width: 2, // 设置边框线宽度
+                            material: Cesium.Color.fromCssColorString(options.material.border.color),
+                            clampToGround: true,
+                        },
+                        polygon: {
+                            hierarchy: new Cesium.CallbackProperty(function () {
+                                const points = getAttackArrowPoints(anchorpoints);
+                                return new Cesium.PolygonHierarchy(points);
+                            }, false),
+                            material: Cesium.Color.fromCssColorString(options.material.fill.color),
+                            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+                            // show:!options.isSolid
+                        },
+                    })
+                }
+                showLinePoints.push(cartesian)
+            }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+            //鼠标移动事件
+            handler.setInputAction((move) => {
+                let endPos = move.endPosition;
+                toolTips(window.toolTip, endPos, true);
+                let cartesian = plottingUtils.getCatesian3FromPX(this.viewer, endPos);
+                if (!cartesian) return;
+                if (Cesium.defined(line)) {
+                    showLinePoints.pop();
+                    showLinePoints.push(cartesian);
+                    if (showLinePoints.length >= 3) {
+                        showLinePoints = []
+                        showLine = false
+                        this.viewer.entities.remove(line);
+                    }
+                }
+                if (anchorpoints.length >= 2) {
+                    if (!Cesium.defined(attackArrow)) {
+                        anchorpoints.push(cartesian);
+                        attackArrow = this.viewer.entities.add({
+                            id: id,
+                            name: 'AttackArrowClass',
+                            type: "situation",
+                            data: options.data,
+                            sort: options.sort || 1,
+                            groupId: this.viewer.root.id,
+                            availability: dateUtils.iso8602TimesToJulianDate(options?.availability || dateUtils.julianDateToIso8602Times(this.viewer.clock.currentTime)),
+                            polygon: new Cesium.PolygonGraphics({
+                                hierarchy: new Cesium.CallbackProperty(function () {
+                                    const points = getAttackArrowPoints(anchorpoints);
+                                    return new Cesium.PolygonHierarchy(points);
+                                }, false),
+                                fill: true,
+                                material: Cesium.Color.fromCssColorString(options.material.fill.color),
+                                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                                show: true
+                            }),
+                            polyline: {
+                                positions: new Cesium.CallbackProperty(function () {
+                                     // 根据多边形顶点计算多边形形状
+                                    return getAttackArrowPoints(anchorpoints);
+                                }, false),
+                                width: 2, // 设置边框线宽度
+                                material: options.material.line.style === "solid" ? Cesium.Color.fromCssColorString(options.material.border.color) : new Cesium.PolylineDashMaterialProperty({
+                                    color: Cesium.Color.fromCssColorString(options.material.line.color),
+                                    // gapColor:Cesium.Color.YELLOW,
+                                    dashLength: 20.0,
+                                    dashPattern: 255.0,
+                                }),
+                                clampToGround: true,
+                            }
+                        });
+                        attackArrow.GeoType = 'AttackArrow'; //记录对象的类型，用户后续编辑等操作
+                        attackArrow.Editable = true; //代表当前对象可编辑,false状态下不可编辑
+                    } else {
+                        anchorpoints.pop();
+                        anchorpoints.push(cartesian);
+                    }
+                }
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+            //左键双击事件
+            handler.setInputAction((event) => {
+                anchorpoints.pop();
+                anchorpoints.pop(); //因为是双击结束，所以要pop两次，一次是move的结果，一次是单击结果
+                showLinePoints.pop();
+                showLinePoints.pop();
+                attackArrow.PottingPoint = Cesium.clone(anchorpoints, true); //记录对象的节点数据，用户后续编辑等操作
+                updateEntityToStaticProperties(attackArrow)
+                if (options?.show instanceof Array){
+                    attackArrow.polyline.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                    attackArrow.polygon.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                }
+                handler.destroy();
+                toolTips(window.toolTip, event.position, false);
+                document.removeEventListener('keydown', cancel)
+                document.removeEventListener("keydown",enterEnd)
+                resolve(attackArrow)
+            }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+            const enterEnd = (e) => {
+                if (e.key === 'Enter') {
+                    attackArrow.PottingPoint = Cesium.clone(anchorpoints, true); //记录对象的节点数据，用户后续编辑等操作
+                    updateEntityToStaticProperties(attackArrow)
+                    handler.destroy();
+                    if (options?.show instanceof Array){
+                        attackArrow.polyline.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                        attackArrow.polygon.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                    }
+                    toolTips(window.toolTip, event.position, false);
+                    document.removeEventListener('keydown', cancel)
+                    document.removeEventListener("keydown", enterEnd)
+                    resolve(attackArrow)
+                }
+            }
+            // 右键摁下事件
+            handler.setInputAction(() => {
+                anchorpoints.pop();
+            }, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
+            const cancel = (e) => {
+                if (e.key === 'Escape') {
+                    this.viewer.entities.remove(attackArrow)
+                    handler.destroy();
+                    toolTips(window.toolTip, null, false);
+                    document.removeEventListener('keydown', cancel)
+                    document.removeEventListener("keydown",enterEnd)
+                    reject("取消标绘")
+                }
+            }
+            document.addEventListener('keydown', cancel)
+            document.addEventListener('keydown', enterEnd)
+        })
+    }
+
+    /**
+     * 编辑进攻箭头标绘
+     * @param {Cesium.Viewer} viewer 该viewer带有实体编辑的信息
+     * @param {Cesium.Entity} entity  编辑实体
+     * @param {Cesium.ScreenSpaceEventHandler} handler 事件处理函数
+     * @param {Array} collection 实体集和
+     *
+     */
+    editAttackArrow(viewer, entity, handler, collection) {
+        let editItem = collection.find((ele) => {
+            return ele.id === entity.id;
+        });
+        let editEntity;
+        let sourcePos = entity["PottingPoint"];
+        if (!sourcePos) {
+            return
+        }
+        let updatePos = Cesium.clone(sourcePos, true);
+        entity.show = false;
+        let dynamicHierarchy = new Cesium.CallbackProperty(() => {
+            let updatePositions = getAttackArrowPoints(updatePos);
+            return new Cesium.PolygonHierarchy(updatePositions);
+        }, false);
+        let lineCallback = new Cesium.CallbackProperty(() => {
+            let points = getAttackArrowPoints(updatePos);
+            return points
+        }, false);
+        if (editItem) {
+            editEntity = editItem.target;
+            editEntity.show = true;
+            editEntity.polygon.hierarchy = dynamicHierarchy;
+            editEntity.polyline.positions = lineCallback;
+            editItem.processEntities = initVertexEntities();
+        } else {
+            const newPolygon = Cesium.clone(entity.polygon);
+            // newPolygon.material = Cesium.Color.RED.withAlpha(0.4);
+            newPolygon.hierarchy = dynamicHierarchy;
+            const newAssembleLine = Cesium.clone(entity.polyline);
+            newAssembleLine.positions = lineCallback;
+            editEntity = viewer.entities.add({
+                GeoType: 'EditAttackArrow',
+                Editable: true,
+                id: 'edit_' + entity.id,
+                polygon: newPolygon,
+                polyline: newAssembleLine
+            });
+            //编辑状态让实体贴地
+            editEntity.polygon.perPositionHeight = false
+            editEntity.polyline.clampToGround = true
+            entity.showEditEntityId = editEntity.id
+            const vertexs = initVertexEntities();
+            collection.push({
+                id: entity.id,
+                source: entity,
+                target: editEntity,
+                geoType: 'remix_attackarrow',
+                processEntities: vertexs,
+            });
+        }
+        let boolDown = false; //鼠标左键是否处于摁下状态
+        let currentPickVertex = undefined; //当前选择的要编辑的节点
+        let currentPickPolygon = undefined; //当前选择的要移动的多边形
+        // 左键摁下事件
+        handler.setInputAction((event) => {
+            boolDown = true;
+            let pick = viewer.scene.pick(event.position);
+            if (Cesium.defined(pick) && pick.id) {
+                const pickEntity = pick.id;
+                editEntity.polygon.hierarchy = dynamicHierarchy
+                editEntity.polyline.positions = lineCallback
+                // TODO
+                editEntity.polygon.material = Cesium.clone(entity.polygon.material)
+                if (!pickEntity.GeoType || !pickEntity.Editable) {
+                    return;
+                }
+                if (pickEntity.GeoType === 'AttackArrowEditPoints') {
+                    lockingMap(viewer, false);
+                    currentPickVertex = pickEntity;
+                } else if (pickEntity.GeoType === 'EditAttackArrow') {
+                    lockingMap(viewer, false);
+                    currentPickPolygon = pickEntity;
+                }
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+        // 鼠标移动事件
+        handler.setInputAction((event) => {
+            if (boolDown && currentPickVertex) {
+                let pos = plottingUtils.getCatesian3FromPX(viewer, event.endPosition);
+                if (pos) {
+                    updatePos[currentPickVertex.description.getValue()] = pos;
+                } else {
+                    console.log("=======================================点不存在")
+                }
+            }
+            if (boolDown && currentPickPolygon) {
+                const startPosition = plottingUtils.getCatesian3FromPX(viewer, event.startPosition);
+                const endPosition = plottingUtils.getCatesian3FromPX(viewer, event.endPosition);
+                if (startPosition && endPosition) {
+                    const changed_x = endPosition.x - startPosition.x;
+                    const changed_y = endPosition.y - startPosition.y;
+                    const changed_z = endPosition.z - startPosition.z;
+
+                    updatePos.forEach((element) => {
+                        element.x += changed_x;
+                        element.y += changed_y;
+                        element.z += changed_z;
+                    });
+                }
+            }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        // 左键抬起事件
+        handler.setInputAction(() => {
+            if (entity.height) {
+                let points = editEntity.polygon.hierarchy.getValue().positions;
+                points = this._changHeight(points, entity.height, true)
+                entity.polygon.hierarchy = points
+                entity.polyline.positions = points
+                entity.polygon.perPositionHeight = true
+                entity.polyline.clampToGround = false
+            } else {
+                entity.polygon.hierarchy = editEntity.polygon.hierarchy.getValue().positions;
+                entity.polyline.positions = editEntity.polyline.positions.getValue()
+            }
+            boolDown = false;
+            currentPickVertex = undefined;
+            currentPickPolygon = undefined;
+            lockingMap(viewer, true);
+            entity.PottingPoint = updatePos;
+            // TODO 更新箭头材质
+            if (entity.polygon.material instanceof Cesium.ImageMaterialProperty){
+                const color = entity.polygon.material["image"]?.getValue()?.dataset.color
+                entity.polygon.material = this.tailFade(entity, color)
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_UP);
+        // 左键点击事件
+        handler.setInputAction((event) => {
+            let pick = viewer.scene.pick(event.position);
+            if (Cesium.defined(pick) && pick.id) {
+                if (pick.id.GeoType === 'AttackArrowEditCenterPoints') {
+                    let index = pick.id.description.getValue();
+                    const pos = pick.id.position.getValue();
+                    updateProcessObj(true, index, pos);
+                }
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        //右键点击事件
+        handler.setInputAction((event) => {
+            let pick = viewer.scene.pick(event.position);
+            if (
+                Cesium.defined(pick) &&
+                pick.id &&
+                pick.id.GeoType === 'AttackArrowEditPoints'
+            ) {
+                let index = pick.id.description.getValue();
+                if (index < 2) {
+                    alert('攻击箭头的箭尾节点不支持删除');
+                    return;
+                }
+                if (updatePos.length < 4) {
+                    alert('攻击箭头节点数不能少于3个');
+                    return;
+                }
+                updateProcessObj(false, index);
+            }
+        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+        function updateProcessObj(add, index, pos) {
+            const item = collection.find((ele) => {
+                return ele.id === entity.id;
+            });
+            if (item && item.processEntities) {
+                item.processEntities.forEach((entity) => {
+                    viewer.entities.remove(entity);
+                });
+                add ? updatePos.splice(index, 0, pos) : updatePos.splice(index, 1);
+                item.processEntities = initVertexEntities();
+            }
+        }
+        function initVertexEntities() {
+            let vertexPointsEntity = []; //中途创建的Point对象
+            let centerPointsEntity = []; //中途创建的虚拟Point对象
+            for (let index = 0; index < updatePos.length; index++) {
+                let point = viewer.entities.add({
+                    id: 'edit_' + uuid.uuid(),
+                    position: new Cesium.CallbackProperty(function () {
+                        return updatePos[index];
+                    }, false),
+                    point: {
+                        pixelSize: 10,
+                        color: Cesium.Color.fromCssColorString("rgba(28, 25, 124,0.6)"),
+                        outlineWidth: 2,
+                        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                        outlineColor: Cesium.Color.fromCssColorString("rgba(175, 172, 170,0.8)"),
+                    },
+                    show: true,
+                    description: index, //记录节点索引
+                });
+                point.GeoType = 'AttackArrowEditPoints';
+                point.Editable = true;
+                vertexPointsEntity.push(point);
+                if (index > 1) {
+                    let centerPoint = viewer.entities.add({
+                        id: 'edit_' + uuid.uuid(),
+                        position: new Cesium.CallbackProperty(() => {
+                            let startPos =
+                                index === 2
+                                    ? Cesium.Cartesian3.midpoint(
+                                        updatePos[0],
+                                        updatePos[1],
+                                        new Cesium.Cartesian3()
+                                    )
+                                    : updatePos[index - 1];
+                            return Cesium.Cartesian3.midpoint(
+                                startPos,
+                                updatePos[index],
+                                new Cesium.Cartesian3()
+                            );
+                        }, false),
+                        point: {
+                            pixelSize: 8,
+                            color: Cesium.Color.fromCssColorString("rgba(11,154,97,0.6)"),
+                            outlineWidth: 2,
+                            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                            outlineColor: Cesium.Color.fromCssColorString("rgba(175, 172, 170,0.8)"),
+                        },
+                        show: true,
+                        description: index, //记录节点索引
+                    });
+                    centerPoint.GeoType = 'AttackArrowEditCenterPoints';
+                    centerPoint.Editable = true;
+                    centerPointsEntity.push(centerPoint);
+                }
+            }
+            return vertexPointsEntity.concat(centerPointsEntity);
+        }
+    }
+
+    /**
+     * @param {Array} options 实体数据导入
+     */
+    showAttackArrow(options) {
+        return new Promise((resolve, reject) => {
+            let existingEntity = this.viewer.entities.getById(options.id);
+            if (existingEntity) {
+                reject(existingEntity)
+                console.log("该实体已经存在，不能重复加载");
+            } else {
+                let availability = dateUtils.iso8602TimesToJulianDate(options.availability);
+                const degreesPositions = options.position.map(item=>plottingUtils.latitudeAndLongitudeToDegrees(item))
+                const degreesArrayHeight = getAttackArrowPoints(degreesPositions).map(item=>{
+                    const temp = plottingUtils.degreesToLatitudeAndLongitude(item)
+                    temp[2] = options.material?.fill?.height||0
+                    return plottingUtils.latitudeAndLongitudeToDegrees(temp)
+                })
+                let entity = this.viewer.entities.add({
+                    id: options.id,
+                    name: options.name,
+                    GeoType: options.geoType,
+                    groupId: options.groupId,
+                    data: options.data,
+                    sort: options.sort || 1,
+                    availability: availability,
+                    type: "situation",
+                    label: "",
+                    Editable: true,
+                    height:options.material.fill.height,
+                    PottingPoint: degreesPositions,
+                    // Path: pathPoint,
+                    polygon: {
+                        hierarchy: new Cesium.PolygonHierarchy(degreesArrayHeight),
+                        material: Cesium.Color.fromCssColorString(options.material.fill.color),
+                        show: options.material.fill.show,
+                        perPositionHeight: options.material.fill.height ? true : false,
+                    },
+                    polyline: {
+                        positions: degreesArrayHeight,
+                        width: 2,
+                        material: this._createLineStyle(options.material.border.style, options.material.border.color),
+                        clampToGround:options.material.border.height ? false: true,
+                    },
+                    show: options.show instanceof Array ? true : options.show === undefined ? true : options.show,
+                });
+                if (options.show instanceof Array){
+                    entity.polyline.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                    entity.polygon.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                }
+                if ("material" in options){
+                    if (options.material?.fill?.fade){
+                        entity.polygon.material = this.tailFade(entity, options.material.fill.color )
+                    }
+                }
+                if (options.animation !== undefined && options.animation != null){
+                    entity.animation = entity.animation || {}
+                    if (options.animation.flicker){
+                        entity.animation.flicker = options.animation.flicker
+                        this.viewer.animations.get("flicker").set(entity.id, entity)
+                    }
+                }
+                resolve(entity)
+            }
+        })
+    }
+
+    /**
+     * 修改实体
+     * @param {Cesium.Entity} source 修改数据的实体
+     * @param {Array} options 修改实体数据
+     */
+    editAttackArrowData(source, options) {
+        //编辑状态实体
+        const showEditEntity = this.viewer.entities.getById(source.showEditEntityId)
+        // 修改 实体 名称
+        "name" in options && (source.name = options.name)
+        // 修改 实体 分组
+        "groupId" in options && (source.groupId = options.groupId)
+        // 修改 实体 数据id
+        "data" in options && (source.data = options.data)
+        // 修改 实体 顺序
+        "sort" in options && (source.sort = options.sort)
+        //是否贴地 设置高度
+        "height" in options && (this._changHeight(source, options.height, false))
+        // 控制实体显隐
+        if ('show' in options){
+            if (options.show instanceof Array){
+                source.show = true
+                source.polyline.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+                source.polygon.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(...options.show)
+            } else {
+                source.show = options.show
+            }
+        }
+        // 修改实体有效期
+        if ("availability" in options) {
+            source.availability.removeAll(); // 移除所有时间间隔
+            source.availability = dateUtils.iso8602TimesToJulianDate(options.availability)
+        }
+        // 修改 实体 阵营
+        if ("camp" in options){
+            source.camp = options.camp
+            const fc = options.camp === 0 ? "rgba(255, 0, 0, .3)" : options.camp === 1 ? "rgba(0, 0, 255, .2)" : "rgba(0, 255, 0, .4)"
+            const bc = options.camp === 0 ? "rgba(255, 0, 0, .8)" : options.camp === 1 ? "rgba(0, 0, 255, .8)" : "rgba(0, 255, 0, .8)"
+            source.polyline.material = Cesium.Color.fromCssColorString(bc)
+            source.polygon.material = Cesium.Color.fromCssColorString(fc)
+            showEditEntity.polyline.material = Cesium.Color.fromCssColorString(bc)
+            showEditEntity.polygon.material = Cesium.Color.fromCssColorString(fc)
+        }
+        // 修改材质
+        if ("material" in options){
+            const material = options.material
+            // 边框
+            if (material.border){
+                const border = material.border
+                // 边框颜色
+                if (border.color){
+                    const color = border.color
+                    if (source.polyline.material instanceof Cesium.PolylineDashMaterialProperty) {
+                        source.polyline.material = setLineMaterial(Cesium.Color.fromCssColorString(color))
+                        showEditEntity.polyline.material = setLineMaterial(Cesium.Color.fromCssColorString(color))
+                    } else if (source.polyline.material instanceof Cesium.PolylineGlowMaterialProperty) {
+                        source.polyline.material = setGlowLine(Cesium.Color.fromCssColorString(color))
+                        showEditEntity.polyline.material = setGlowLine(Cesium.Color.fromCssColorString(color))
+                    } else {
+                        source.polyline.material = Cesium.Color.fromCssColorString(border.color)
+                        showEditEntity.polyline.material = Cesium.Color.fromCssColorString(border.color)
+                    }
+                }
+                // 边框样式
+                if (border.style){
+                    const style = border.style
+                    const outline = source.polyline.material.getValue()
+                    source.polyline.material = this._createLineStyle(style, outline.color)
+                    showEditEntity.polyline.material = this._createLineStyle(style, outline.color)
+                }
+                // 边框宽度
+                if (border.width){
+                    source.polyline.width = border.width
+                    showEditEntity.polyline.width = border.width
+                }
+            }
+            // 填充
+            if (material.fill){
+                const fill = material.fill
+                // 填充颜色
+                if (fill.color){
+                    source.polygon.material = source.polygon.material instanceof Cesium.ImageMaterialProperty ? this.tailFade(source, fill.color) : Cesium.Color.fromCssColorString(fill.color)
+                    showEditEntity.polygon.material = source.polygon.material instanceof Cesium.ImageMaterialProperty ? this.tailFade(source, fill.color) : Cesium.Color.fromCssColorString(fill.color)
+                }
+                // 是否填充
+                if (fill.show!==undefined && fill.show!==null){
+                    source.polygon.show = fill.show
+                    showEditEntity.polygon.show = fill.show
+                }
+                // 箭尾虚化
+                if (fill["fade"]!==undefined && fill["fade"]!==null){
+                    const fade = fill["fade"]
+                    // 如果本来就是淡化
+                    if (source.polygon.material instanceof Cesium.ImageMaterialProperty){
+                        const canvasColor = source.polygon.material["image"]?.getValue()?.dataset.color
+                        source.polygon.material = fade || Cesium.Color.fromCssColorString(canvasColor)
+                        showEditEntity.polygon.material = fade ||  Cesium.Color.fromCssColorString(canvasColor)
+                    } else {
+                        source.polygon.material = this.tailFade(source, colorFormat(source.polygon.material["color"]?.getValue()))
+                        showEditEntity.polygon.material = this.tailFade(source, colorFormat(source.polygon.material["color"]?.getValue()))
+                    }
+                }
+            }
+        }
+
+        //修改动画时间
+        if (options.animation !== undefined && options.animation != null){
+            source.animation = source.animation || {}
+            if (options.animation.flicker){
+                source.animation.flicker = options.animation.flicker
+                this.viewer.animations.get("flicker").set(source.id, source)
+            } else {
+                delete source.animation["flicker"]
+                this.viewer.animations.get("flicker").delete(source.id)
+            }
+        }
+        this.viewer.resource.set(source.id, this.getAttackArrowJson(source))
+    }
+
+    /**
+     * 获取态势箭头 Json 数据
+     *
+     * @param {*} entity 实体
+     * */
+    getAttackArrowJson(entity) {
+        const {startTime, endTime} = dateUtils.availabilityToTimes(entity.availability)
+        const temp = {
+            id: entity.id,
+            name: entity.name,
+            data: entity.data || null,
+            sort: entity.sort,
+            type: entity.type,
+            groupId: entity.groupId,
+            geoType: entity.GeoType,
+            camp: entity.camp || 0,
+            startTime: startTime,
+            endTime: endTime,
+            show: entity.polygon.distanceDisplayCondition?.getValue() instanceof Object ? [...Object.values(entity.polygon.distanceDisplayCondition.getValue())] : entity.show,
+            label: entity?.label?.text
+        }
+        let lineType = ""
+        if (entity?.polyline.material instanceof Cesium.PolylineDashMaterialProperty) {
+            lineType = "dashed"
+        } else if (entity?.polyline.material instanceof Cesium.PolylineGlowMaterialProperty) {
+            lineType = "glow"
+        } else {
+            lineType = "solid"
+        }
+        if (entity.polygon.material instanceof Cesium.ImageMaterialProperty) {
+            const outlineColor = entity.polyline.material?.color?.getValue()
+            const outlineColorString = colorFormat(outlineColor)
+            const polyline = entity.polyline
+            const polygon = entity.polygon
+            temp['material'] = {
+                border: {
+                    style: lineType,
+                    color: outlineColorString,
+                    height: entity?.height,
+                    width: polyline?.width.getValue(),
+                    show: polyline?.show?.getValue()
+                },
+                fill: {
+                    color: polygon.material.image.getValue().dataset.color,
+                    height: entity?.height,
+                    fade: true,
+                    show: polygon.show?.getValue(),
+                }
+            }
+        } else {
+            const color = entity.polygon.material?.color?.getValue()
+            const outlineColor = entity.polyline.material?.color?.getValue()
+            temp['material'] = {
+                border: {
+                    style: lineType,
+                    color: colorFormat(outlineColor),
+                    height: entity?.height,
+                    width:entity.polyline.width.getValue(),
+                    show: entity.polyline?.show?.getValue()
+                },
+                fill: {
+                    color: colorFormat(color),
+                    height: entity?.height,
+                    show: entity.polygon?.show?.getValue(),
+                },
+            }
+        }
+        if (entity.animation){
+            temp["animation"] = {}
+            if (entity.animation.flicker) temp["animation"]["flicker"] = entity.animation.flicker
+        }
+        temp['position'] = entity.PottingPoint.map(point => plottingUtils.degreesToLatitudeAndLongitude(point))
+        return temp
+    }
+
+    /**
+     * 创建边框或线样式 材质
+     *
+     * 实线、虚线、发光线
+     * */
+    _createLineStyle(type, color) {
+        color = color instanceof Cesium.Color ? colorFormat(color) : color
+        if (type === "solid") {
+            return Cesium.Color.fromCssColorString(color)
+        } else if (type === "dashed") {
+            return setLineMaterial(Cesium.Color.fromCssColorString(color))
+        } else if (type === "glow") {
+            return setGlowLine(Cesium.Color.fromCssColorString(color))
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * 生长线动画
+     *
+     * @param entity {Cesium.Entity} 实体
+     * @param duration {Number} 生长时间
+     * */
+    _growAnimation(entity, duration){
+        // 异步执行
+        const degreesList = entity["PottingPoint"] // 笛卡尔点
+        // 取箭头尾部两节点
+        const a = degreesList[0]
+        const b = degreesList[1]
+        const center = Cesium.Cartesian3.lerp(a, b, 0.5, new Cesium.Cartesian3())
+        const remo = [...degreesList.slice(2, degreesList.length)]
+        const positions = [center, ...degreesList.slice(2, degreesList.length)].map(item=>plottingUtils.degreesToLatitudeAndLongitude(item)) // 经纬度
+        const paths = bezierSpline(lineString(positions)).geometry.coordinates.map(item=>plottingUtils.latitudeAndLongitudeToDegrees(item)).reverse()
+
+        // 将对应点平均插入列表
+        const step = Math.floor(paths.length/remo.length)+1
+        const inds = remo.map((_, index)=>index*step)
+
+        const points = [a, b, paths.pop()]
+        const dynamicHierarchy = new Cesium.CallbackProperty(() => {  // 面的动画回调
+            let updatePositions = getAttackArrowPoints(points);
+            return new Cesium.PolygonHierarchy(updatePositions);
+        }, false);
+        const lineCallback = new Cesium.CallbackProperty(() => {
+            return getAttackArrowPoints(points);
+        }, false);
+        entity.polygon.hierarchy = dynamicHierarchy
+        entity.polyline.positions = lineCallback
+        const t=  Math.floor(duration*1000/paths.length)
+        const interval = (list, times)=>{
+            const po = list.pop()
+            if (inds.indexOf(list.length)!==-1){
+                console.log("111");
+            } else {
+                points.pop()
+            }
+            points.push(po)
+            // console.log(list.pop());
+            if (list.length===0) {
+                updateEntityToStaticProperties(entity)
+            } else {
+                setTimeout(()=>{
+                    interval(list, times)
+                }, times)
+            }
+        }
+        interval(paths, t)
+    }
+
+    /** 箭头移动 */
+    // moveAnimation(entity, duration){
+    //     // 获取路径
+    //     const path = entity["path"]
+    //     const degreesList = entity["PottingPoint"]
+    //     // 取箭头尾部两节点
+    //     const a = degreesList[0]
+    //     const b = degreesList[1]
+    //     // 计算箭尾中点
+    //     const center = Cesium.Cartesian3.lerp(a, b, 0.5, new Cesium.Cartesian3())
+    //     // 计算箭尾至中点距离
+    //     const centerDistance = Cesium.Cartesian3.distance(a, b) / 2
+    //     // 声明箭头身体点 body
+    //     const body = [center, ...degreesList.slice(2, degreesList.length)]
+    //     // 声明头部 路径点
+    //     const header = [degreesList[degreesList.length-1], ...path]
+    //     // 声明尾部 路径点 foot
+    //     const foot = [...body, ...path]
+    //
+    //     // 计算 头部路径线点
+    //     const headerPoints = bezierSpline(lineString(header)).geometry.coordinates.map(item=>plottingUtils.latitudeAndLongitudeToDegrees(item)).reverse()
+    //     // 计算尾部路径线点
+    //     const footPoints = bezierSpline(lineString(foot)).geometry.coordinates.map(item=>plottingUtils.latitudeAndLongitudeToDegrees(item)).reverse()
+    //
+    //     // 声明箭头渲染所需点
+    //     const points = [...degreesList]
+    //
+    //     const dynamicHierarchy = new Cesium.CallbackProperty(() => {  // 面的动画回调
+    //         return new Cesium.PolygonHierarchy(getAttackArrowPoints(points));
+    //     }, false);
+    //     const lineCallback = new Cesium.CallbackProperty(() => {
+    //         return getAttackArrowPoints(points);
+    //     }, false);
+    //     entity.polygon.hierarchy = dynamicHierarchy
+    //     entity.polyline.positions = lineCallback
+    //
+    //     const t=  Math.floor(duration*1000/header.length)
+    //
+    //     const lastFootPoint = center
+    //
+    //     const interval = (list, times)=>{
+    //         // 头部点位
+    //         const point1 = list.pop()
+    //         // 尾部点位
+    //         const point2 = footPoints.pop()
+    //
+    //         if (list.length===0) {
+    //             updateEntityToStaticProperties(entity)
+    //         } else {
+    //             setTimeout(()=>{
+    //                 interval(list, times)
+    //             }, times)
+    //         }
+    //     }
+    //
+    //     /** 根据新旧两点 重新计算得出箭尾两点 */
+    //     const computeArrowFootPoints = (p1, p2, d) => {
+    //         // 求尾部点与此次尾部点斜率
+    //         const k = (p2.y - p1.y) / (p2.x - p1.x)
+    //         // 求其垂线斜率
+    //         const vk = -1 / k
+    //
+    //
+    //     }
+    //
+    //     interval(headerPoints, t)
+    // }
+
+    /**
+     * 尾部淡化材质
+     *
+     * @param {Cesium.Entity} entity Cesium实体
+     * @param {String} color 颜色
+     * */
+    tailFade(entity, color){
+        const degreesList = entity["PottingPoint"] // 笛卡尔点
+        // 取箭头尾部两节点 计算 尾部中点
+        const A = Cesium.Cartesian3.lerp(degreesList[0], degreesList[1], 0.5, new Cesium.Cartesian3())
+        const lonLatA = plottingUtils.degreesToLatitudeAndLongitude(A)
+        // 取 箭头头部
+        const B = degreesList[degreesList.length-1]
+        const lonLatB = plottingUtils.degreesToLatitudeAndLongitude(B)
+        // 计算两点正北方向夹角
+        const angle = 90 - locationUtils.getAzimuth(lonLatA, lonLatB)
+        // const distance = Cesium.Cartesian3.distance(A, B)
+        console.log(angle);
+        return gradientMaterial(["rgba(0,0,0,0)", color], angle)
+    }
+
+    /**
+     * 改变实体的高度
+     * @param  source 修改数据的实体，编辑时为实体点
+     * @param  height 修改实体数据的高度
+     * @param  isEdit 是否处于编辑状态
+     * */
+    _changHeight(source, height, isEdit) {
+        if (isEdit) {
+            let currentHeight = source.map(points => {
+                let currentHeight = plottingUtils.degreesToLatitudeAndLongitude(points)
+                currentHeight[2] = height
+                return plottingUtils.latitudeAndLongitudeToDegrees(currentHeight);
+            })
+            return currentHeight
+        } else {
+            // 获取当前的顶点坐标
+            const currentPositions = source.polygon.hierarchy.getValue(this.viewer.clock.currentTime).positions;
+            if (!Cesium.defined(currentPositions)) return
+            // 修改每个polygon顶点的高度
+            let newPositions = currentPositions.map(cartesian => {
+                let currentHeight = plottingUtils.degreesToLatitudeAndLongitude(cartesian)
+                currentHeight[2] = height
+                return plottingUtils.latitudeAndLongitudeToDegrees(currentHeight);
+            });
+            source.polygon.perPositionHeight = height ? true : false
+            source.polyline.clampToGround = height ? false : true
+            source.polygon.hierarchy = newPositions
+            source.polyline.positions = newPositions
+            source.height = height
+        }
+    }
+}
+
+export default AttackArrowClass

@@ -1,0 +1,158 @@
+@import url("./iconfont/iconfont.css");
+/*@import "//at.alicdn.com/t/c/font_4132765_8ls9c1ca04o.css";*/
+
+/** 引入自定义字体 */
+@font-face {
+    font-family: 优选标题黑;
+    src: url('../font/优设标题黑.ttf')
+}
+
+@font-face {
+    font-family: 潮字社小石简;
+    src: url('../font/潮字社小石简.ttf')
+}
+
+@font-face {
+    font-family: 潮字社曾玉波手书简;
+    src: url('../font/潮字社曾玉波手书简.ttf')
+}
+
+@font-face {
+    font-family: 字玩女侠勘亭流-闪 苍劲;
+    src: url('../font/字玩女侠勘亭流-闪 苍劲.ttf')
+}
+
+@font-face {
+    font-family: 字玩机甲宙斯简-闪 合金;
+    src: url('../font/字玩机甲宙斯简-闪 合金.ttf')
+}
+
+@font-face {
+    font-family: 方正小标宋简体;
+    src: url("../font/方正小标宋简体.ttf");
+}
+
+@font-face {
+    font-family: 方正白舟武骨简;
+    src: url("../font/方正白舟武骨简.ttf");
+}
+
+@font-face {
+    font-family: 锐字锐线怒放;
+    src: url("../font/锐字锐线怒放.ttf");
+}
+
+@font-face {
+    font-family: "PingFang Bold";
+    src: url("../font/PingFang Bold.ttf");
+}
+
+@font-face {
+    font-family: "PingFang ExtraLight";
+    src: url("../font/PingFang ExtraLight.ttf");
+}
+
+@font-face {
+    font-family: "PingFang Heavy";
+    src: url("../font/PingFang Heavy.ttf");
+}
+
+@font-face {
+    font-family: "PingFang Light";
+    src: url("../font/PingFang Light.ttf");
+}
+
+@font-face {
+    font-family: "PingFang Medium";
+    src: url("../font/PingFang Medium.ttf");
+}
+
+@font-face {
+    font-family: "PingFang Regular";
+    src: url("../font/PingFang Regular.ttf");
+}
+
+@font-face {
+    font-family: 方正正大黑简体;
+    src: url("../font/方正正大黑简体.ttf");
+}
+
+@font-face {
+    font-family: 华康俪金黑W8;
+    src: url("../font/华康俪金黑W8(P).ttf");
+}
+
+@font-face {
+    font-family: 毛泽东字体;
+    src: url("../font/毛泽东字体.ttf");
+}
+
+@font-face {
+    font-family: "SourceSansPro-SemiBold";
+    src: url("../font/SOURCESANSPRO-SEMIBOLD.ttf");
+}
+
+@font-face {
+    font-family: 汇文正楷;
+    src: url("../font/汇文正楷v1.001.ttf");
+}
+
+@font-face {
+    font-family: 临海隶书;
+    src: url("../font/临海隶书.ttf");
+}
+
+@font-face {
+    font-family: 行书;
+    src: url("../font/HongLeiXingShuJianTi-2.otf");
+}
+
+@font-face {
+    font-family: 飞云体;
+    src: url("../font/云峰飞云体.ttf");
+}
+
+@font-face {
+    font-family: 阿里方圆体;
+    src: url("../font/AlimamaFangYuanTiVF-Thin-2.ttf");
+}
+
+@font-face {
+    font-family: 魏碑体;
+    src: url("../font/SanJiXinWeiBeiJian-2.ttf");
+}
+
+@font-face {
+    font-family: 手写体;
+    src: url("../font/huangkaihuaLawyerfont-2.ttf");
+}
+
+@font-face {
+    font-family: 行楷;
+    src: url("../font/YanShiXiaXingKai-2.ttf");
+}
+
+@font-face {
+    font-family: 毛笔粗体;
+    src: url("../font/Slidefu-Regular-2.ttf");
+}
+
+@font-face {
+    font-family: 思源细黑体;
+    src: url("../font/SourceHanSansOLD-ExtraLight-2.otf");
+}
+
+@font-face {
+    font-family: 明朝体;
+    src: url("../font/AozoraMinchoLight-2.ttf");
+}
+
+@font-face {
+    font-family: 汉仪南宫体;
+    src: url("../font/HYNanGongTiJ-2.ttf");
+}
+
+@font-face {
+    font-family: 汉仪瘦金体;
+    src: url("../font/HanYiShouJinShuJian-1.ttf");
+}

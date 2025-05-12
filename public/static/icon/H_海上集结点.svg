@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40" height="40"
+ viewBox="0 0 536 536"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny">
+<title>SVG Generator Example Drawing</title>
+<desc>An SVG drawing created by the SVG Generator Example provided with Qt.</desc>
+<defs>
+</defs>
+<g fill="none" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="none" stroke="#ff0000" stroke-opacity="1" stroke-width="25" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="黑体" font-size="151.5" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M525,268.5 C525,410.161 410.161,525 268.5,525 C126.839,525 12,410.161 12,268.5 C12,126.839 126.839,12 268.5,12 C410.161,12 525,126.839 525,268.5 "/>
+</g>
+
+<g fill="none" stroke="#ff0000" stroke-opacity="1" stroke-width="25" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="黑体" font-size="151.5" font-weight="400" font-style="normal"
+>
+<text fill="#ff0000" fill-opacity="1" stroke="none" xml:space="preserve" x="168" y="320" font-family="黑体" font-size="151.5" font-weight="400" font-style="normal"
+ >集</text>
+</g>
+</g>
+</svg>

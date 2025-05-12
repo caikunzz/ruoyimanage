@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40px" height="40px"
+ viewBox="0 0 521 521"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny">
+<title>SVG Generator Example Drawing</title>
+<desc>An SVG drawing created by the SVG Generator Example provided with Qt.</desc>
+<defs>
+</defs>
+<g fill="#ff0000" fill-opacity="0.1" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="red" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="380,363 372,339 358,357 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="144,363 152,339 166,357 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="239,186 287,186 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="260,150 260,426 " />
+<path vector-effect="none" fill-rule="evenodd" d="M267,131.5 C267,135.09 264.761,138 262,138 C259.239,138 257,135.09 257,131.5 C257,127.91 259.239,125 262,125 C264.761,125 267,127.91 267,131.5 "/>
+<path vector-effect="none" fill-rule="evenodd" d="M288,130.5 C288,141.822 277.031,151 263.5,151 C249.969,151 239,141.822 239,130.5 C239,119.178 249.969,110 263.5,110 C277.031,110 288,119.178 288,130.5 "/>
+<path vector-effect="none" fill-rule="evenodd" d="M155.005,354.303 C155.002,354.535 155,354.767 155,355 C155,394.212 203.129,426 262.5,426 C321.871,426 370,394.212 370,355 C370,354.792 369.999,354.585 369.996,354.377 "/>
+</g>
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="red" stroke-opacity="1" stroke-width="28" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M508,261 C508,397.414 397.414,508 261,508 C124.586,508 14,397.414 14,261 C14,124.586 124.586,14 261,14 C397.414,14 508,124.586 508,261 "/>
+</g>
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="red" stroke-opacity="1" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<path vector-effect="none" fill-rule="evenodd" d="M452,260 C452,366.039 366.039,452 260,452 C153.961,452 68,366.039 68,260 C68,153.961 153.961,68 260,68 C366.039,68 452,153.961 452,260 "/>
+</g>
+</g>
+</svg>

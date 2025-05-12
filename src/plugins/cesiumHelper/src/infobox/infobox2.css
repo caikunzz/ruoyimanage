@@ -1,0 +1,50 @@
+.cesium-helper-infobox-horn-block-1 {
+    --borderColor: #ffb800;
+
+    position: absolute;
+    transform: translateY(-50%) translateX(-50%);
+
+    box-shadow: 0 0 1.5vw rgba(255, 255, 255, 0.34) inset;
+    cursor: pointer;
+    text-align: center;
+    min-height: 35px;
+    background: linear-gradient(to left, var(--borderColor), var(--borderColor)) left top no-repeat,
+    linear-gradient(to bottom, var(--borderColor), var(--borderColor)) left top no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) right top no-repeat,
+    linear-gradient(to bottom, var(--borderColor), var(--borderColor)) right top no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) left bottom no-repeat,
+    linear-gradient(to bottom, var(--borderColor), var(--borderColor)) left bottom no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) right bottom no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) right bottom no-repeat;
+    background-size: 2px 10px, 10px 2px, 2px 10px, 10px 2px;
+    border: 2px solid transparent;
+    color: white;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    overflow: hidden;
+    align-items: center;
+    animation: width-grow .4s;
+
+    padding: 0 10px;
+
+    span {
+        min-width: 100px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+}
+
+@keyframes width-grow {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100px;
+    }
+}

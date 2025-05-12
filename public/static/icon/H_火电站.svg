@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40" height="40"
+ viewBox="0 0 506 515"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny">
+<title>SVG Generator Example Drawing</title>
+<desc>An SVG drawing created by the SVG Generator Example provided with Qt.</desc>
+<defs>
+</defs>
+<g fill="#ff0000" fill-opacity="0.1" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="#ff0000" stroke-opacity="1" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,4 36,511 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="228,4 228,511 132,453 36,511 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,4 132,68 228,4 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,259 228,259 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="4,68 260,68 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,165 228,165 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="38,449 230,449 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,356 220,356 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="4,68 36,165 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="260,68 228,157 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,68 220,157 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,259 220,348 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="220,77 44,157 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="36,165 220,252 36,356 220,445 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="220,165 36,259 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="220,356 36,445 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="230,453 502,453 502,509 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="230,509 502,509 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="366,453 366,501 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="294,453 294,501 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="430,453 430,509 " />
+</g>
+
+<g fill="#0000ff" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="326,445 342,261 382,261 398,445 326,445 " />
+</g>
+
+<g fill="#0000ff" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="366,245 390,221 414,221 422,221 438,221 454,213 462,213 464,214 467,214 469,214 471,214 473,214 474,214 475,214 476,215 477,216 477,217 477,218 477,219 477,220 478,221 486,237 470,237 462,237 446,237 445,238 444,239 443,239 442,240 441,240 440,241 439,241 437,241 436,241 434,241 433,240 431,239 430,237 429,237 428,236 427,235 426,235 425,234 424,233 423,232 421,232 420,231 418,230 417,230 415,230 414,229 406,229 405,230 404,230 403,230 401,230 400,230 398,230 397,231 395,231 394,232 392,233 391,234 390,235 390,236 390,237 391,237 392,238 393,237 394,238 395,237 396,237 397,237 396,237 394,237 392,237 390,237 366,245 " />
+</g>
+</g>
+</svg>

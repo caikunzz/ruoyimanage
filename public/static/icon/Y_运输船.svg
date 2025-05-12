@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40px" height="40px"
+ viewBox="0 0 549 230"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny">
+<title>SVG Generator Example Drawing</title>
+<desc>An SVG drawing created by the SVG Generator Example provided with Qt.</desc>
+<defs>
+</defs>
+<g fill="#ff0000" fill-opacity="0.1" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="#ff0000" fill-opacity="0.1" stroke="#ff0000" stroke-opacity="1" stroke-width="25" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="276,12 256,13 236,14 216,17 196,20 177,24 158,29 139,35 121,42 103,50 86,59 70,69 54,79 40,91 26,103 12,116 39,141 70,163 103,182 139,196 177,207 216,214 255,218 294,218 334,214 373,207 411,196 446,181 480,163 510,141 537,116 524,104 510,91 495,80 480,70 463,60 446,52 429,44 411,37 392,31 373,25 354,21 335,18 315,15 295,13 276,12 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="279,66 279,162 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="180,162 372,162 372,66 180,66 180,162 " />
+</g>
+</g>
+</svg>

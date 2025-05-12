@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40px" height="40px"
+ viewBox="0 0 508 513"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny">
+<title>SVG Generator Example Drawing</title>
+<desc>An SVG drawing created by the SVG Generator Example provided with Qt.</desc>
+<defs>
+</defs>
+<g fill="#ff0000" fill-opacity="0.1" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="#0000ff" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="5,508 503,508 503,187 402,187 402,508 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="402,187 402,45 394,35 386,27 377,20 367,14 357,9 346,7 336,5 325,5 314,7 303,10 292,14 282,20 272,27 262,35 253,45 253,77 253,108 253,139 252,170 253,201 252,231 253,261 253,291 253,322 253,352 253,383 253,414 253,445 253,476 253,508 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="253,45 244,35 235,27 225,20 215,14 205,9 195,7 185,5 174,5 164,7 154,10 144,14 135,20 126,27 117,35 108,45 108,76 108,107 108,138 109,169 108,200 109,231 108,261 108,291 108,322 108,353 108,384 108,415 108,446 108,477 108,508 " />
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="108,271 6,508 " />
+</g>
+
+<g fill="#0000ff" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="108,45 116,38 123,32 130,26 137,22 144,19 152,17 159,16 166,16 173,17 181,19 188,22 195,26 201,32 208,38 214,45 214,76 214,107 214,138 215,169 214,200 215,231 214,261 214,291 214,322 214,353 214,384 214,415 214,446 214,477 214,508 108,508 108,45 " />
+</g>
+
+<g fill="#0000ff" fill-opacity="1" stroke="#ff0000" stroke-opacity="1" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="2" transform="matrix(1,0,0,1,0,0)"
+font-family="SimSun" font-size="9" font-weight="400" font-style="normal"
+>
+<polyline fill="#ff0000" fill-opacity="0.1" vector-effect="none" points="255,45 261,38 268,32 275,26 282,22 289,19 297,17 304,16 311,16 318,17 326,19 333,22 339,26 346,32 352,38 359,45 359,76 359,107 359,138 358,169 359,200 358,231 359,261 359,291 359,322 359,353 359,384 359,415 359,446 359,477 359,508 255,508 255,45 " />
+</g>
+</g>
+</svg>
