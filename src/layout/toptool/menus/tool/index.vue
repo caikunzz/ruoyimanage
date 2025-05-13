@@ -1,19 +1,25 @@
 <template>
   <el-dropdown trigger="click" @command="handleCommand" placement="top-start">
-    <div class="el-dropdown-link tool-menu-item">
-      工具
-    </div>
-    <el-dropdown-menu slot="dropdown" >
-      <el-dropdown-item command="placeAdd"><i class="iconfont icon-dianweishiqu"></i>坐标拾取</el-dropdown-item>
-      <el-dropdown-item command="distanceMeasure"><i class="iconfont icon-mti-juliceliang"></i>距离测量</el-dropdown-item>
-      <el-dropdown-item command="areaMeasure"><i class="iconfont icon-mti-mianjiceliang"></i>面积测量</el-dropdown-item>
-      <el-dropdown-item command="modelMeasure"><i class="iconfont icon-sanjiaoceliang1"></i>三角测量</el-dropdown-item>
+    <div class="el-dropdown-link tool-menu-item">工具</div>
+    <el-dropdown-menu slot="dropdown">
+      <el-dropdown-item command="placeAdd"
+        ><i class="iconfont icon-dianweishiqu"></i>坐标拾取</el-dropdown-item
+      >
+      <el-dropdown-item command="distanceMeasure"
+        ><i class="iconfont icon-mti-juliceliang"></i>距离测量</el-dropdown-item
+      >
+      <el-dropdown-item command="areaMeasure"
+        ><i class="iconfont icon-mti-mianjiceliang"></i
+        >面积测量</el-dropdown-item
+      >
+      <el-dropdown-item command="modelMeasure"
+        ><i class="iconfont icon-sanjiaoceliang1"></i>三角测量</el-dropdown-item
+      >
     </el-dropdown-menu>
   </el-dropdown>
 </template>
 
 <script>
-
 export default {
   name: "index",
   methods: {
@@ -33,20 +39,23 @@ export default {
           break;
       }
     },
-    addPlace(){
-      this.$cesiumHelper.plotting.placePlotting.createPlacePlotting().then(entity=>{
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        this.$store.dispatch("addEntitySource", info)
-        this.$nextTick(()=>this.$store.dispatch("setActivateEntity", info))
-      }, err=>{
-        this.$message.error(err)
-      })
+    addPlace() {
+      this.$cesiumHelper.plotting.placePlotting.createPlacePlotting().then(
+        (entity) => {
+          const info = this.$cesiumHelper.getEntityInfo(entity);
+          this.$store.dispatch("addEntitySource", info);
+          this.$nextTick(() => this.$store.dispatch("setActivateEntity", info));
+        },
+        (err) => {
+          this.$message.error(err);
+        }
+      );
     },
-    measure(){
-      console.log("测量工具")
-    }
-  }
-}
+    measure() {
+      console.log("测量工具");
+    },
+  },
+};
 </script>
 
 <style scoped>

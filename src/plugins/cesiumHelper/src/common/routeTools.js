@@ -19,26 +19,39 @@ const Cesium = window.Cesium;
  * 8. 返回时间数组 `timeG`，表示每个点对应的时间点。
  */
 
-export function generateTime(options,points) {
-    let startTime = Cesium.JulianDate.fromIso8601(options.times.start);
-    let endTime = Cesium.JulianDate.fromIso8601(options.times.end);
-    let timeG = [Cesium.JulianDate.toIso8601(startTime, 6)];
-    const timeDifferenceInSeconds = Cesium.JulianDate.secondsDifference(endTime, startTime);
-    // 计算距离和总距离
-    const {distances, totalDistance} = calculateDistances(points.map(point=>plottingUtils.degreesToLatitudeAndLongitude(point)));
-    // 计算每个点到下一个点需要的时间
-    const timeIntervals = calculateTimeIntervals(distances, timeDifferenceInSeconds, totalDistance);
-    // 输出每个点到下一个点需要的时间
-    for (let i = 0; i < timeIntervals.length; i++) {
-        const secondsToAdd = timeIntervals[i];
-        const newTime = Cesium.JulianDate.addSeconds(startTime, secondsToAdd, new Cesium.JulianDate());
-        timeG.push(Cesium.JulianDate.toIso8601(newTime, 6));
-        if (i === timeIntervals.length - 1) {
-            timeG[timeG.length - 1] = Cesium.JulianDate.toIso8601(endTime, 6)
-        }
-        startTime = newTime;
+export function generateTime(options, points) {
+  let startTime = Cesium.JulianDate.fromIso8601(options.times.start);
+  let endTime = Cesium.JulianDate.fromIso8601(options.times.end);
+  let timeG = [Cesium.JulianDate.toIso8601(startTime, 6)];
+  const timeDifferenceInSeconds = Cesium.JulianDate.secondsDifference(
+    endTime,
+    startTime
+  );
+  // 计算距离和总距离
+  const { distances, totalDistance } = calculateDistances(
+    points.map((point) => plottingUtils.degreesToLatitudeAndLongitude(point))
+  );
+  // 计算每个点到下一个点需要的时间
+  const timeIntervals = calculateTimeIntervals(
+    distances,
+    timeDifferenceInSeconds,
+    totalDistance
+  );
+  // 输出每个点到下一个点需要的时间
+  for (let i = 0; i < timeIntervals.length; i++) {
+    const secondsToAdd = timeIntervals[i];
+    const newTime = Cesium.JulianDate.addSeconds(
+      startTime,
+      secondsToAdd,
+      new Cesium.JulianDate()
+    );
+    timeG.push(Cesium.JulianDate.toIso8601(newTime, 6));
+    if (i === timeIntervals.length - 1) {
+      timeG[timeG.length - 1] = Cesium.JulianDate.toIso8601(endTime, 6);
     }
-    return timeG;
+    startTime = newTime;
+  }
+  return timeG;
 }
 /**
  * 计算一组点之间的距离
@@ -56,18 +69,18 @@ export function generateTime(options,points) {
  */
 
 function calculateDistances(points) {
-    const distances = [];
-    let totalDistance = 0;
+  const distances = [];
+  let totalDistance = 0;
 
-    for (let i = 1; i < points.length; i++) {
-        const prevPoint = points[i - 1];
-        const currentPoint = points[i];
-        const distance = calculateHaversineDistance(prevPoint, currentPoint);
-        distances.push(distance);
-        totalDistance += distance;
-    }
+  for (let i = 1; i < points.length; i++) {
+    const prevPoint = points[i - 1];
+    const currentPoint = points[i];
+    const distance = calculateHaversineDistance(prevPoint, currentPoint);
+    distances.push(distance);
+    totalDistance += distance;
+  }
 
-    return {distances, totalDistance};
+  return { distances, totalDistance };
 }
 /**
  * 计算两点间的哈弗辛距离（大圆距离）
@@ -88,22 +101,25 @@ function calculateDistances(points) {
  */
 
 function calculateHaversineDistance(point1, point2) {
-    const [lat1, lon1] = point1;
-    const [lat2, lon2] = point2;
+  const [lat1, lon1] = point1;
+  const [lat2, lon2] = point2;
 
-    const radLat1 = (Math.PI * lat1) / 180;
-    const radLat2 = (Math.PI * lat2) / 180;
-    const deltaLat = (Math.PI * (lat2 - lat1)) / 180;
-    const deltaLon = (Math.PI * (lon2 - lon1)) / 180;
+  const radLat1 = (Math.PI * lat1) / 180;
+  const radLat2 = (Math.PI * lat2) / 180;
+  const deltaLat = (Math.PI * (lat2 - lat1)) / 180;
+  const deltaLon = (Math.PI * (lon2 - lon1)) / 180;
 
-    const a =
-        Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-        Math.cos(radLat1) * Math.cos(radLat2) * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const a =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(radLat1) *
+      Math.cos(radLat2) *
+      Math.sin(deltaLon / 2) *
+      Math.sin(deltaLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return 6371 * c;
+  return 6371 * c;
 }
 
 function calculateTimeIntervals(distances, totalSeconds, totalDistance) {
-    return distances.map((distance) => (distance / totalDistance) * totalSeconds);
+  return distances.map((distance) => (distance / totalDistance) * totalSeconds);
 }

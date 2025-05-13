@@ -4,27 +4,34 @@
 
 <script>
 export default {
-  data(){
-    return{
-
-    }
+  data() {
+    return {};
   },
-  methods:{
-    showEntityTip(_, entity){
-      entity.label.text = "！！！"
+  methods: {
+    showEntityTip(_, entity) {
+      entity.label.text = "！！！";
     },
-    showEntityInfo(_, entity){
-      if (entity.type !== "image") return
-      this.$cesiumHelper.updateObjById(entity.id, {material:{targetLine: {style: "dashed"}},animation: {autoRotate: true, targetLine: {type: "entity", value:  "285b0c79933b47a983ae3953a6685eae"}}})
-      const dom = entity.infobox
-      if (dom instanceof HTMLElement){
-        setTimeout(()=>{
-          dom.className = "cesium-helper-infobox-horn-block-4"
-          dom.innerHTML = "<span>柴油：900/1000吨</span><span>煤油：1000/1000吨</span>"
-        }, 3000)
+    showEntityInfo(_, entity) {
+      if (entity.type !== "image") return;
+      this.$cesiumHelper.updateObjById(entity.id, {
+        material: { targetLine: { style: "dashed" } },
+        animation: {
+          autoRotate: true,
+          targetLine: {
+            type: "entity",
+            value: "285b0c79933b47a983ae3953a6685eae",
+          },
+        },
+      });
+      const dom = entity.infobox;
+      if (dom instanceof HTMLElement) {
+        setTimeout(() => {
+          dom.className = "cesium-helper-infobox-horn-block-4";
+          dom.innerHTML =
+            "<span>柴油：900/1000吨</span><span>煤油：1000/1000吨</span>";
+        }, 3000);
       }
-
-    }
+    },
   },
   // mounted() {
   //   this.$nextTick(()=>{
@@ -34,12 +41,10 @@ export default {
   // destroyed() {
   //   this.$cesiumHelper.removeEntityActivateEvent("test-click")
   // }
-}
+};
 </script>
 
-<style scoped lang="less">
-
-</style>
+<style scoped lang="less"></style>
 
 <style>
 .cesium-helper-infobox-horn-block-3 {
@@ -52,14 +57,22 @@ export default {
   cursor: pointer;
   text-align: center;
   min-height: 35px;
-  background: linear-gradient(to left, var(--borderColor), var(--borderColor)) left top no-repeat,
-  linear-gradient(to bottom, var(--borderColor), var(--borderColor)) left top no-repeat,
-  linear-gradient(to left, var(--borderColor), var(--borderColor)) right top no-repeat,
-  linear-gradient(to bottom, var(--borderColor), var(--borderColor)) right top no-repeat,
-  linear-gradient(to left, var(--borderColor), var(--borderColor)) left bottom no-repeat,
-  linear-gradient(to bottom, var(--borderColor), var(--borderColor)) left bottom no-repeat,
-  linear-gradient(to left, var(--borderColor), var(--borderColor)) right bottom no-repeat,
-  linear-gradient(to left, var(--borderColor), var(--borderColor)) right bottom no-repeat;
+  background: linear-gradient(to left, var(--borderColor), var(--borderColor))
+      left top no-repeat,
+    linear-gradient(to bottom, var(--borderColor), var(--borderColor)) left top
+      no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) right top
+      no-repeat,
+    linear-gradient(to bottom, var(--borderColor), var(--borderColor)) right top
+      no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) left bottom
+      no-repeat,
+    linear-gradient(to bottom, var(--borderColor), var(--borderColor)) left
+      bottom no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) right
+      bottom no-repeat,
+    linear-gradient(to left, var(--borderColor), var(--borderColor)) right
+      bottom no-repeat;
   background-size: 2px 10px, 10px 2px, 2px 10px, 10px 2px;
   border: 2px solid transparent;
   color: white;
@@ -83,7 +96,6 @@ export default {
 }
 
 .cesium-helper-infobox-horn-block-4 {
-
   width: 180px;
   height: 116px;
 
@@ -104,21 +116,21 @@ export default {
 
   color: white;
 
-  span{
+  span {
     font-size: 12px;
   }
 
-  & > *{
+  & > * {
     position: relative;
     top: -10px;
   }
 }
 
-.cesium-helper-infobox-horn-block-5{
+.cesium-helper-infobox-horn-block-5 {
   position: absolute;
   transform: translateY(-5%) translateX(-50%);
 
-  i{
+  i {
     font-size: 30px;
     color: yellow;
   }

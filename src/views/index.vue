@@ -1,26 +1,26 @@
 <template>
   <div class="contain">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
-import * as loginApi from "@/api/login"
+import * as loginApi from "@/api/login";
 export default {
-  name: 'HomeView',
+  name: "HomeView",
   methods: {
-    getInfo(){
-      loginApi.getInfo()
-    }
+    getInfo() {
+      loginApi.getInfo();
+    },
   },
   mounted() {
-    this.getInfo()
-  }
-}
+    this.getInfo();
+  },
+};
 </script>
 
 <style scoped>
-.contain{
+.contain {
   width: 100%;
   height: 100%;
 }

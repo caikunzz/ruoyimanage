@@ -7,55 +7,65 @@
  * @LastEditTime: 2022-03-04 19:42:58
  */
 class RadarWaveMaterialProperty {
-    constructor(options) {
-        this._definitionChanged = new Cesium.Event();
-        this._color = undefined;
-        this._speed = undefined;
-        this.color = options.color;
-        this.speed = options.speed;
-    };
+  constructor(options) {
+    this._definitionChanged = new Cesium.Event();
+    this._color = undefined;
+    this._speed = undefined;
+    this.color = options.color;
+    this.speed = options.speed;
+  }
 
-    get isConstant() {
-        return false;
+  get isConstant() {
+    return false;
+  }
+
+  get definitionChanged() {
+    return this._definitionChanged;
+  }
+
+  getType() {
+    return Cesium.Material.RadarWaveMaterialType;
+  }
+
+  getValue(time, result) {
+    if (!Cesium.defined(result)) {
+      result = {};
     }
 
-    get definitionChanged() {
-        return this._definitionChanged;
-    }
+    result.color = Cesium.Property.getValueOrDefault(
+      this._color,
+      time,
+      Cesium.Color.RED,
+      result.color
+    );
+    result.speed = Cesium.Property.getValueOrDefault(
+      this._speed,
+      time,
+      10,
+      result.speed
+    );
+    return result;
+  }
 
-    getType() {
-        return Cesium.Material.RadarWaveMaterialType;
-    }
-
-    getValue(time, result) {
-        if (!Cesium.defined(result)) {
-            result = {};
-        }
-
-        result.color = Cesium.Property.getValueOrDefault(this._color, time, Cesium.Color.RED, result.color);
-        result.speed = Cesium.Property.getValueOrDefault(this._speed, time, 10, result.speed);
-        return result
-    }
-
-    equals(other) {
-        return (this === other ||
-            (other instanceof RadarWaveMaterialProperty &&
-                Cesium.Property.equals(this._color, other._color) &&
-                Cesium.Property.equals(this._speed, other._speed))
-        )
-    }
+  equals(other) {
+    return (
+      this === other ||
+      (other instanceof RadarWaveMaterialProperty &&
+        Cesium.Property.equals(this._color, other._color) &&
+        Cesium.Property.equals(this._speed, other._speed))
+    );
+  }
 }
 
 Object.defineProperties(RadarWaveMaterialProperty.prototype, {
-    color: Cesium.createPropertyDescriptor('color'),
-    speed: Cesium.createPropertyDescriptor('speed')
-})
+  color: Cesium.createPropertyDescriptor("color"),
+  speed: Cesium.createPropertyDescriptor("speed"),
+});
 
 Cesium.RadarWaveMaterialProperty = RadarWaveMaterialProperty;
-Cesium.Material.RadarWaveMaterialProperty = 'RadarWaveMaterialProperty';
-Cesium.Material.RadarWaveMaterialType = 'RadarWaveMaterialType';
-Cesium.Material.RadarWaveMaterialSource =
-    `
+Cesium.Material.RadarWaveMaterialProperty = "RadarWaveMaterialProperty";
+Cesium.Material.RadarWaveMaterialType = "RadarWaveMaterialType";
+Cesium.Material.RadarWaveMaterialSource = `
     uniform vec4 color;
     uniform float speed;
 
@@ -83,18 +93,21 @@ Cesium.Material.RadarWaveMaterialSource =
     material.diffuse = flagColor * 3.0;
     return material;
     }
-     `
+     `;
 
-Cesium.Material._materialCache.addMaterial(Cesium.Material.RadarWaveMaterialType, {
+Cesium.Material._materialCache.addMaterial(
+  Cesium.Material.RadarWaveMaterialType,
+  {
     fabric: {
-        type: Cesium.Material.RadarWaveMaterialType,
-        uniforms: {
-            color: new Cesium.Color(1.0, 0.0, 0.0, 1.0),
-            speed: 10.0
-        },
-        source: Cesium.Material.RadarWaveMaterialSource
+      type: Cesium.Material.RadarWaveMaterialType,
+      uniforms: {
+        color: new Cesium.Color(1.0, 0.0, 0.0, 1.0),
+        speed: 10.0,
+      },
+      source: Cesium.Material.RadarWaveMaterialSource,
     },
-    translucent: function(material) {
-        return true;
-    }
-})
+    translucent: function (material) {
+      return true;
+    },
+  }
+);

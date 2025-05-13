@@ -1,12 +1,18 @@
 <template>
-  <div ref="iconList" class="track-list-icon-container" @touchmove.prevent @mousewheel.prevent>
-    <span class="track-list-icon-top"/>
+  <div
+    ref="iconList"
+    class="track-list-icon-container"
+    @touchmove.prevent
+    @mousewheel.prevent
+  >
+    <span class="track-list-icon-top" />
     <div class="track-list-icon-item">
       <div
-          v-for="(item, index) in entities" :key="index"
-          class="icon-bar"
-          :class="focusTrack && focusTrack.id === item.id ? 'is-active': ''"
-          :style="{height: eleTypeStyle[item.type].h + 'px'}"
+        v-for="(item, index) in entities"
+        :key="index"
+        class="icon-bar"
+        :class="focusTrack && focusTrack.id === item.id ? 'is-active' : ''"
+        :style="{ height: eleTypeStyle[item.type].h + 'px' }"
       >
         <i class="iconfont" :class="iconMap.get(item.type)"></i>
       </div>
@@ -22,37 +28,39 @@ export default {
   props: {
     eleTypeStyle: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     offsetTop: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    focusTrack:{
+    focusTrack: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   computed: {
     /** 实体资源 */
     entities() {
-      const list = store.getters.entities.filter(p=> p.type!=="group" && p.type !== "root")
-      const filter = list.filter(p => p.type !== "camera")
-      const cameraIndex = list.findIndex(item=>item.type==="camera")
-      return cameraIndex !== -1 ? [...filter, list[cameraIndex]] : list
+      const list = store.getters.entities.filter(
+        (p) => p.type !== "group" && p.type !== "root"
+      );
+      const filter = list.filter((p) => p.type !== "camera");
+      const cameraIndex = list.findIndex((item) => item.type === "camera");
+      return cameraIndex !== -1 ? [...filter, list[cameraIndex]] : list;
     },
 
     /** 图标字典 */
-    iconMap(){
-      return store.state.cesium.iconMap
-    }
+    iconMap() {
+      return store.state.cesium.iconMap;
+    },
   },
   watch: {
-    offsetTop(val){
+    offsetTop(val) {
       this.$refs.iconList.scrollTop = val;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
@@ -76,7 +84,7 @@ export default {
     right: 0;
     left: 0;
     top: 0;
-    background-color: #D5D5D5;
+    background-color: #d5d5d5;
     z-index: 2;
   }
 
@@ -105,18 +113,18 @@ export default {
       color: #000000;
       box-sizing: border-box;
 
-      i{
+      i {
         color: black;
         font-size: 14px;
       }
     }
 
-    .is-active{
+    .is-active {
       background-color: #eeeeee;
     }
 
     .is-main {
-      background-color: rgb(59 130 246/ 0.2)
+      background-color: rgb(59 130 246/ 0.2);
     }
   }
 
@@ -125,10 +133,10 @@ export default {
     height: 5px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #D5D5D5;
+    background-color: #d5d5d5;
   }
   &::-webkit-scrollbar-track {
-    background-color: #D5D5D5;
+    background-color: #d5d5d5;
   }
 }
 </style>

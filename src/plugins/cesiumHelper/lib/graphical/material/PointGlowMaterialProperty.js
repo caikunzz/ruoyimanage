@@ -24,48 +24,54 @@
  * */
 
 class PointGlowMaterialProperty {
-    constructor(options) {
-        this._definitionChanged = new Cesium.Event();
-        this._color = undefined;
-        this.color = options.color || Cesium.Color.RED;
+  constructor(options) {
+    this._definitionChanged = new Cesium.Event();
+    this._color = undefined;
+    this.color = options.color || Cesium.Color.RED;
+  }
+
+  get isConstant() {
+    return false;
+  }
+
+  get definitionChanged() {
+    return this._definitionChanged;
+  }
+
+  getType() {
+    return Cesium.Material.PointGlowMaterialType;
+  }
+
+  getValue(time, result) {
+    if (!Cesium.defined(result)) {
+      result = {};
     }
 
-    get isConstant() {
-        return false;
-    }
+    result.color = Cesium.Property.getValueOrDefault(
+      this._color,
+      time,
+      Cesium.Color.RED,
+      result.color
+    );
+    return result;
+  }
 
-    get definitionChanged() {
-        return this._definitionChanged;
-    }
-
-    getType() {
-        return Cesium.Material.PointGlowMaterialType;
-    }
-
-    getValue(time, result) {
-        if (!Cesium.defined(result)) {
-            result = {};
-        }
-
-        result.color = Cesium.Property.getValueOrDefault(this._color, time, Cesium.Color.RED, result.color);
-        return result;
-    }
-
-    equals(other) {
-        return (this === other ||
-            (other instanceof PointGlowMaterialProperty &&
-                Cesium.Property.equals(this._color, other._color))
-        );
-    }
+  equals(other) {
+    return (
+      this === other ||
+      (other instanceof PointGlowMaterialProperty &&
+        Cesium.Property.equals(this._color, other._color))
+    );
+  }
 }
 
 Object.defineProperties(PointGlowMaterialProperty.prototype, {
-    color: Cesium.createPropertyDescriptor('color'),
+  color: Cesium.createPropertyDescriptor("color"),
 });
 
 Cesium.PointGlowMaterialProperty = PointGlowMaterialProperty;
-Cesium.Material.PointGlowMaterialProperty = 'PointGlowMaterialProperty';
-Cesium.Material.PointGlowMaterialType = 'PointGlowMaterialType';
+Cesium.Material.PointGlowMaterialProperty = "PointGlowMaterialProperty";
+Cesium.Material.PointGlowMaterialType = "PointGlowMaterialType";
 Cesium.Material.PointGlowMaterialSource = `
   uniform vec4 color;
 
@@ -93,15 +99,18 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
 
 `;
 
-Cesium.Material._materialCache.addMaterial(Cesium.Material.PointGlowMaterialType, {
+Cesium.Material._materialCache.addMaterial(
+  Cesium.Material.PointGlowMaterialType,
+  {
     fabric: {
-        type: Cesium.Material.PointGlowMaterialType,
-        uniforms: {
-            color: new Cesium.Color(1.0, 0.0, 0.0, 1.0), // 初始颜色
-        },
-        source: Cesium.Material.PointGlowMaterialSource,
+      type: Cesium.Material.PointGlowMaterialType,
+      uniforms: {
+        color: new Cesium.Color(1.0, 0.0, 0.0, 1.0), // 初始颜色
+      },
+      source: Cesium.Material.PointGlowMaterialSource,
     },
     translucent: function () {
-        return true;
+      return true;
     },
-});
+  }
+);

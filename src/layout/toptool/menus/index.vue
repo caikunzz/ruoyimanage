@@ -2,24 +2,22 @@
   <div class="top-menus">
     <file-menu />
     <tool-menu />
-<!--    <setting-menu />-->
+    <!--    <setting-menu />-->
     <help-menu />
-    <search class="position-search"/>
+    <search class="position-search" />
   </div>
 </template>
 
 <script>
-import FileMenu from "@/layout/toptool/menus/file"
-import ToolMenu from "@/layout/toptool/menus/tool"
+import FileMenu from "@/layout/toptool/menus/file";
+import ToolMenu from "@/layout/toptool/menus/tool";
 // import SettingMenu from "@/layout/toptool/menus/setting"
-import HelpMenu from "@/layout/toptool/menus/help"
+import HelpMenu from "@/layout/toptool/menus/help";
 import Search from "@/layout/toptool/search/index.vue";
 
 export default {
-  components: {Search, FileMenu, ToolMenu, HelpMenu},
-
-
-}
+  components: { Search, FileMenu, ToolMenu, HelpMenu },
+};
 </script>
 
 <style scoped lang="less">

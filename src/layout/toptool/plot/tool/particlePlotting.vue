@@ -1,50 +1,74 @@
 <template>
   <div class="entity-animation">
     <el-collapse accordion v-model="activeName">
-      <el-collapse-item v-for="(item, index) in modelMenu" :key="index" :title="item.name" :name="index">
+      <el-collapse-item
+        v-for="(item, index) in modelMenu"
+        :key="index"
+        :title="item.name"
+        :name="index"
+      >
         <div class="particles-plot-item">
-          <div class="particles-wrapper" v-for="(i_item, i_index) in item.value" :key="i_index">
+          <div
+            class="particles-wrapper"
+            v-for="(i_item, i_index) in item.value"
+            :key="i_index"
+          >
             <img
-                class="particles"
-                data-drop-type="cesium-drop-particles"
-                :src="i_item.img"
-                :data-gif="i_item.text"
-                :data-url="i_item.url"
-                @dragend="dragend"/>
+              class="particles"
+              data-drop-type="cesium-drop-particles"
+              :src="i_item.img"
+              :data-gif="i_item.text"
+              :data-url="i_item.url"
+              @dragend="dragend"
+            />
             <span class="text" style="margin-top: auto">{{ i_item.text }}</span>
           </div>
         </div>
       </el-collapse-item>
       <el-collapse-item title="导入文件" v-loading="customParticleLoading">
         <div class="input-wrapper">
-          <el-input placeholder="请输入文件名" size="mini" v-model="queryParams.fileName" />
-          <el-button size="mini" type="primary" @click="getCustomParticleList(1)" icon="el-icon-search">搜索</el-button>
+          <el-input
+            placeholder="请输入文件名"
+            size="mini"
+            v-model="queryParams.fileName"
+          />
+          <el-button
+            size="mini"
+            type="primary"
+            @click="getCustomParticleList(1)"
+            icon="el-icon-search"
+            >搜索</el-button
+          >
           <el-upload
-              size="mini"
-              class="upload-demo"
-              :action="uploadFileUrl"
-              :headers="headers"
-              accept=".gif"
-              :on-success="handleUploadSuccess">
-            <el-button size="mini" type="success" icon="el-icon-upload2">上传</el-button>
+            size="mini"
+            class="upload-demo"
+            :action="uploadFileUrl"
+            :headers="headers"
+            accept=".gif"
+            :on-success="handleUploadSuccess"
+          >
+            <el-button size="mini" type="success" icon="el-icon-upload2"
+              >上传</el-button
+            >
           </el-upload>
         </div>
         <div class="particles-plot-item">
-          <div class="particles-wrapper particles-wrapper-custom" v-for="(i_item, i_index) in customParticle" :key="i_index">
-            <img
-                :src="i_item.url"
-                :data-url="i_item.url"
-                @dragend="dragend"
-            >
+          <div
+            class="particles-wrapper particles-wrapper-custom"
+            v-for="(i_item, i_index) in customParticle"
+            :key="i_index"
+          >
+            <img :src="i_item.url" :data-url="i_item.url" @dragend="dragend" />
             <span>{{ i_item.name }}</span>
           </div>
         </div>
         <div class="pagination-wrapper">
           <el-pagination
-              small
-              layout="prev, pager, next"
-              :total="total"
-              @current-change="getCustomParticleList">
+            small
+            layout="prev, pager, next"
+            :total="total"
+            @current-change="getCustomParticleList"
+          >
           </el-pagination>
         </div>
       </el-collapse-item>
@@ -83,14 +107,14 @@ export default {
         status: 1,
         pageSize: 12,
         pageNum: 1,
-        fileName: undefined
+        fileName: undefined,
       },
-    }
+    };
   },
   methods: {
     /** 获取token */
-    getToken(){
-      return localStorage.getItem("token")
+    getToken() {
+      return localStorage.getItem("token");
     },
     /** 获取模型菜单列表 */
     getModelList() {
@@ -98,54 +122,81 @@ export default {
         {
           name: "粒子特效",
           value: [
-            {img: require("@/assets/images/gif/blast.png"), text: "爆炸", url: "/static/gif/blast2.gif"},
-            {img: require("@/assets/images/gif/碰撞.png"), text: "撞击", url: "/static/gif/碰撞.gif"},
-            {img: require("@/assets/images/gif/giphy.png"), text: "枪焰", url: "/static/gif/giphy.gif"},
-            {img: require("@/assets/images/gif/Wildfire.png"),text: "火焰",url: "/static/gif/Wildfire.gif"},
-            {img: require("@/assets/images/gif/smoke.png"),text: "烟雾",url: "/static/gif/smoke.gif"},
-          ]
-        }
-      ]
-      this.modelMenu = data
+            {
+              img: require("@/assets/images/gif/blast.png"),
+              text: "爆炸",
+              url: "/static/gif/blast2.gif",
+            },
+            {
+              img: require("@/assets/images/gif/碰撞.png"),
+              text: "撞击",
+              url: "/static/gif/碰撞.gif",
+            },
+            {
+              img: require("@/assets/images/gif/giphy.png"),
+              text: "枪焰",
+              url: "/static/gif/giphy.gif",
+            },
+            {
+              img: require("@/assets/images/gif/Wildfire.png"),
+              text: "火焰",
+              url: "/static/gif/Wildfire.gif",
+            },
+            {
+              img: require("@/assets/images/gif/smoke.png"),
+              text: "烟雾",
+              url: "/static/gif/smoke.gif",
+            },
+          ],
+        },
+      ];
+      this.modelMenu = data;
     },
     /** 获取自定义模型 */
-    getCustomParticleList(val){
-      this.customParticleLoading = true
-      this.queryParams.pageNum = val
-      fileNodeApi.list(this.queryParams).then(res=>{
-        this.total = res.total
-        this.customParticle = res.rows.map(item=>{return {id:item.id, name: item.fileName, url: item.fileUrl}})
-        this.customParticleLoading = false
-      }).catch(()=>{
-        this.customParticleLoading = false
-      })
+    getCustomParticleList(val) {
+      this.customParticleLoading = true;
+      this.queryParams.pageNum = val;
+      fileNodeApi
+        .list(this.queryParams)
+        .then((res) => {
+          this.total = res.total;
+          this.customParticle = res.rows.map((item) => {
+            return { id: item.id, name: item.fileName, url: item.fileUrl };
+          });
+          this.customParticleLoading = false;
+        })
+        .catch(() => {
+          this.customParticleLoading = false;
+        });
     },
     /** 上传成功回调 */
     handleUploadSuccess(res, file) {
-      this.queryParams.fileName = file.name
-      this.getCustomParticleList(1)
+      this.queryParams.fileName = file.name;
+      this.getCustomParticleList(1);
     },
     async dragend(event) {
-      event.preventDefault()
+      event.preventDefault();
       event.stopPropagation();
-      const url = event.target.dataset.url
+      const url = event.target.dataset.url;
       // 获取鼠标所在坐标对应的经纬度
-      const position = await this.$cesiumHelper.windowLocationToLatitudeAndLongitude(event)
-      this.$cesiumHelper.plotting.particlePlotting.createParticlePlot({url, position}).then(entity=>{
-          const info = this.$cesiumHelper.getEntityInfo(entity)
-          store.dispatch("addEntitySource", info)
-      })
+      const position =
+        await this.$cesiumHelper.windowLocationToLatitudeAndLongitude(event);
+      this.$cesiumHelper.plotting.particlePlotting
+        .createParticlePlot({ url, position })
+        .then((entity) => {
+          const info = this.$cesiumHelper.getEntityInfo(entity);
+          store.dispatch("addEntitySource", info);
+        });
     },
   },
   mounted() {
-    this.getModelList()
-    this.getCustomParticleList(1)
-  }
-}
+    this.getModelList();
+    this.getCustomParticleList(1);
+  },
+};
 </script>
 
 <style lang="less" scoped>
-
 .el-dialog__wrapper {
   z-index: 0;
 }
@@ -169,30 +220,30 @@ export default {
   margin: auto;
 }
 
-.particles-wrapper:hover{
-  background-color: #EBEBEB;
+.particles-wrapper:hover {
+  background-color: #ebebeb;
 }
 .particles-wrapper > span {
   font-size: 12px;
-  overflow:hidden;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
 }
 
-.input-wrapper{
+.input-wrapper {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
 
   padding-bottom: 10px;
 
-  .el-input{
+  .el-input {
     width: 120px;
     margin-left: 10px;
   }
 
-  .el-button{
+  .el-button {
     padding: 0;
     margin-left: 10px;
     width: 55px;
@@ -200,15 +251,14 @@ export default {
   }
 }
 
-.pagination-wrapper{
+.pagination-wrapper {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
 }
 
-/deep/.upload-demo{
-
-  .el-upload-list{
+/deep/.upload-demo {
+  .el-upload-list {
     display: none;
   }
 }
@@ -229,9 +279,9 @@ export default {
   text-align: center;
 }
 
-.particles-wrapper-custom{
+.particles-wrapper-custom {
   text-align: start;
-  > span{
+  > span {
     padding: 0 5px;
   }
 }
@@ -243,13 +293,13 @@ export default {
 }
 
 .pickupIco {
-  margin-left:5px ;
+  margin-left: 5px;
   display: inline;
   cursor: pointer;
   border-radius: 2px; /* 圆角边框 */
   transition: background-color 0.3s ease; /* 添加平滑过渡效果 */
 }
-.pickupIco:hover{
+.pickupIco:hover {
   background-color: rgb(210, 210, 210);
 }
 

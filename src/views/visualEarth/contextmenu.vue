@@ -1,8 +1,8 @@
 <template>
   <div
-      v-if="isShow"
-      class="contextmenuContainer"
-      :style="{ left: left + 'px', top: top + 'px' }"
+    v-if="isShow"
+    class="contextmenuContainer"
+    :style="{ left: left + 'px', top: top + 'px' }"
   >
     <template>
       <div class="item" @click="copy">
@@ -26,7 +26,6 @@
 </template>
 
 <script>
-
 export default {
   name: "ContextMenu",
   data() {
@@ -34,7 +33,7 @@ export default {
       isShow: false,
       left: 10,
       top: 0,
-      currentEntityId: null
+      currentEntityId: null,
     };
   },
   mounted() {
@@ -60,25 +59,28 @@ export default {
     },
     /** 拷贝实体 */
     copy() {
-      this.$cesiumHelper.copyById(this.currentEntityId).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        this.$store.dispatch("addEntitySource", info)
-      }).catch(err=>{
-        this.$message.error(err)
-      })
+      this.$cesiumHelper
+        .copyById(this.currentEntityId)
+        .then((entity) => {
+          const info = this.$cesiumHelper.getEntityInfo(entity);
+          this.$store.dispatch("addEntitySource", info);
+        })
+        .catch((err) => {
+          this.$message.error(err);
+        });
     },
     /** 编辑实体 */
     update() {
-      const info = this.$cesiumHelper.getEntityInfo(this.currentEntityId)
-      if(info == null)  this.$message.error("该实体不支持编辑")
-      this.$store.dispatch("setActivateEntity", info)
+      const info = this.$cesiumHelper.getEntityInfo(this.currentEntityId);
+      if (info == null) this.$message.error("该实体不支持编辑");
+      this.$store.dispatch("setActivateEntity", info);
     },
     /** 删除实体 */
     remove() {
-      this.$cesiumHelper.deleteObjById(this.currentEntityId)
-      this.$store.dispatch("removeEntitySource", this.currentEntityId)
+      this.$cesiumHelper.deleteObjById(this.currentEntityId);
+      this.$store.dispatch("removeEntitySource", this.currentEntityId);
     },
-  }
+  },
 };
 </script>
 
@@ -86,9 +88,9 @@ export default {
 .contextmenuContainer {
   position: fixed;
   width: 80px;
-  background-color: rgba(235, 235, 235, .7);
+  background-color: rgba(235, 235, 235, 0.7);
   border-radius: 4px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, .2);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   margin: -0.25rem 0 0 0.125rem;
   padding: 0;
   z-index: 20000;
@@ -104,11 +106,11 @@ export default {
     line-height: 18px;
     position: relative;
 
-    i{
+    i {
       margin-right: 5px;
     }
 
-    &>*{
+    & > * {
       position: relative;
       left: -3px;
     }
@@ -127,13 +129,13 @@ export default {
       color: #f56c6c;
 
       > .item-content-right {
-        color: #1a1a1a;;
+        color: #1a1a1a;
       }
     }
 
     &:hover {
-      background: #2B579A;
-      color: #FFFFFF;
+      background: #2b579a;
+      color: #ffffff;
     }
 
     &.disabled {

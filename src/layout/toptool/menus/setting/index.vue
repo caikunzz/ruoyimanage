@@ -1,15 +1,11 @@
 <template>
   <el-dropdown trigger="click" @command="handleCommand" placement="top-start">
-    <div class="el-dropdown-link tool-menu-item">
-      设置
-    </div>
-    <el-dropdown-menu slot="dropdown">
-    </el-dropdown-menu>
+    <div class="el-dropdown-link tool-menu-item">设置</div>
+    <el-dropdown-menu slot="dropdown"> </el-dropdown-menu>
   </el-dropdown>
 </template>
 
 <script>
-
 export default {
   name: "index",
   methods: {
@@ -18,9 +14,9 @@ export default {
         default:
           break;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

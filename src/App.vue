@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <style>
-html, body{
+html,
+body {
   margin: 0;
 
   height: 100vh;
@@ -35,7 +36,7 @@ nav a.router-link-exact-active {
   color: #42b983;
 }
 /*轮盘控制器*/
-.compass{
+.compass {
   top: 105px;
 }
 </style>

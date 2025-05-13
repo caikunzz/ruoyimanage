@@ -5,40 +5,30 @@
       <el-checkbox v-model="showTimeLine">素材时间线</el-checkbox>
       <el-checkbox v-model="showResource">基础资源</el-checkbox>
 
-      <directory
-          ref="treeEntityRef"
-          v-model="showTreeEntity">
-      </directory>
-      <timeline
-          ref="timeLineRef"
-          v-model="showTimeLine">
-      </timeline>
-      <resource
-          ref="ResourceRef"
-          v-model="showResource">
-      </resource>
+      <directory ref="treeEntityRef" v-model="showTreeEntity"> </directory>
+      <timeline ref="timeLineRef" v-model="showTimeLine"> </timeline>
+      <resource ref="ResourceRef" v-model="showResource"> </resource>
     </div>
   </div>
 </template>
 
 <script>
-
 import Directory from "./directory";
 import Timeline from "./timeline";
 import Resource from "./resource";
 
 export default {
   name: "index",
-  components: {Resource, Timeline, Directory},
+  components: { Resource, Timeline, Directory },
   data() {
     return {
       /* 复选框 */
       showTreeEntity: false,
       showTimeLine: false,
       showResource: false,
-    }
+    };
   },
-}
+};
 </script>
 
 <style scoped>
@@ -56,7 +46,7 @@ export default {
   height: 40px;
   padding-top: 7px;
 
-  .el-checkbox{
+  .el-checkbox {
     margin-left: 5px;
   }
 }

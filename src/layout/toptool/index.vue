@@ -5,29 +5,40 @@
       <!--  标题栏  -->
       <div class="title-bar">
         <el-dropdown trigger="click" @command="handleCommand">
-        <span class="el-dropdown-link">
-          <span class="user-name">当前用户：{{ userInfo?.username }}</span>
-        </span>
+          <span class="el-dropdown-link">
+            <span class="user-name">当前用户：{{ userInfo?.username }}</span>
+          </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div class="tool-control-btn" :class="topUtilGroupBarState ? 'is-active' : ''" @click="topUtilGroupBarState = !topUtilGroupBarState"><i class="iconfont icon-guding"></i></div>
+      <div
+        class="tool-control-btn"
+        :class="topUtilGroupBarState ? 'is-active' : ''"
+        @click="topUtilGroupBarState = !topUtilGroupBarState"
+      >
+        <i class="iconfont icon-guding"></i>
+      </div>
     </div>
-    <div class="top-tool-body-wrapper" :class="topUtilGroupBarState ? 'top-tool-body-show': 'top-tool-body-hide'">
+    <div
+      class="top-tool-body-wrapper"
+      :class="
+        topUtilGroupBarState ? 'top-tool-body-show' : 'top-tool-body-hide'
+      "
+    >
       <div class="top-tool-item">
-        <plot-group/>
+        <plot-group />
         <span class="plot-item-foot">标绘插件</span>
       </div>
       <div class="divider-line"></div>
       <div class="top-tool-item">
-        <window-group/>
+        <window-group />
         <span class="plot-item-foot">窗口</span>
       </div>
       <div class="divider-line"></div>
       <div class="top-tool-item">
-        <tool-group/>
+        <tool-group />
         <span class="plot-item-foot">辅助功能</span>
       </div>
     </div>
@@ -35,52 +46,52 @@
 </template>
 
 <script>
-import TopMenus from "@/layout/toptool/menus"
+import TopMenus from "@/layout/toptool/menus";
 
 import WindowGroup from "@/layout/toptool/window/index.vue";
 import ToolGroup from "@/layout/toptool/other/index.vue";
 import PlotGroup from "@/layout/toptool/plot/tool/index.vue";
-import {logout} from "@/api/login";
+import { logout } from "@/api/login";
 
 export default {
-  components: {WindowGroup, ToolGroup, PlotGroup, TopMenus},
+  components: { WindowGroup, ToolGroup, PlotGroup, TopMenus },
   computed: {
     userInfo() {
       return {
-        username: localStorage.getItem("username")
-      }
-    }
+        username: localStorage.getItem("username"),
+      };
+    },
   },
-  data(){
-    return{
-      topUtilGroupBarState: true
-    }
+  data() {
+    return {
+      topUtilGroupBarState: true,
+    };
   },
   methods: {
-
     /* 标题点击事件 */
-    handleCommand(val){
-      switch (val){
+    handleCommand(val) {
+      switch (val) {
         case "logout":
-          this.userLogout()
-          break
+          this.userLogout();
+          break;
         default:
-          this.$message.warning("未知方法")
+          this.$message.warning("未知方法");
       }
     },
 
     /* 用户登出 */
-    userLogout(){
-      logout().then(()=>{
-        localStorage.removeItem("username")
-        localStorage.removeItem("password")
-        localStorage.removeItem("token")
-        this.$router.push("/login")
-      }).catch(()=>{})
-    }
-  }
-}
-
+    userLogout() {
+      logout()
+        .then(() => {
+          localStorage.removeItem("username");
+          localStorage.removeItem("password");
+          localStorage.removeItem("token");
+          this.$router.push("/login");
+        })
+        .catch(() => {});
+    },
+  },
+};
 </script>
 
 <style scoped lang="less">
@@ -93,7 +104,7 @@ export default {
     width: 100%;
     height: 35px;
     line-height: 35px;
-    background-color: #2B579A;
+    background-color: #2b579a;
 
     .title-bar {
       height: 34px;
@@ -104,7 +115,7 @@ export default {
       top: 0;
       right: 34px;
 
-      &:hover{
+      &:hover {
         background-color: #124078;
       }
       .user-name {
@@ -112,19 +123,19 @@ export default {
         color: #ffffff;
       }
     }
-    .tool-control-btn{
+    .tool-control-btn {
       width: 34px;
       height: 34px;
       position: absolute;
       top: 0;
       right: 0;
       color: white;
-      &:hover{
+      &:hover {
         background-color: #124078;
       }
     }
 
-    .is-active{
+    .is-active {
       color: #409eff;
     }
   }
@@ -161,7 +172,7 @@ export default {
     .divider-line {
       width: 1px;
       height: 100%;
-      background-color: #C6C6C6;
+      background-color: #c6c6c6;
       margin: 0 10px;
     }
   }
@@ -171,7 +182,7 @@ export default {
     height: 65px;
     overflow: hidden;
     position: relative;
-    transition: all .3s;
+    transition: all 0.3s;
   }
 
   .top-tool-body-hide {
@@ -179,7 +190,7 @@ export default {
     height: 0;
     overflow: hidden;
     position: relative;
-    transition: all .3s;
+    transition: all 0.3s;
     padding: 0;
   }
 }
@@ -200,13 +211,13 @@ export default {
   }
 
   & > .cesium-performanceDisplay-fps {
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: normal;
     font-family: Avenir, Helvetica, Arial, sans-serif;
 
     &::before {
       content: "帧率：";
-      color: #FFFFFF;
+      color: #ffffff;
       font-size: 12px;
     }
   }

@@ -1,4 +1,4 @@
-const Cesium = window.Cesium
+const Cesium = window.Cesium;
 
 /**
  * 儒略日时间转 Iso8601 格式
@@ -11,8 +11,8 @@ const Cesium = window.Cesium
  * 2. 使用 Cesium 的 `JulianDate.toIso8601` 方法完成转换，返回标准的日期时间格式。
  */
 
-export function julianDateToIso8601(julianDate){
-    return Cesium.JulianDate.toIso8601(julianDate)
+export function julianDateToIso8601(julianDate) {
+  return Cesium.JulianDate.toIso8601(julianDate);
 }
 
 /**
@@ -27,10 +27,10 @@ export function julianDateToIso8601(julianDate){
  * 3. 返回调整时区后的 `Date` 对象。
  */
 
-export function julianDateToDate(julianDate){
-    const date = Cesium.JulianDate.toDate(julianDate);
-    date.setHours(date.getHours() - 8)
-    return date
+export function julianDateToDate(julianDate) {
+  const date = Cesium.JulianDate.toDate(julianDate);
+  date.setHours(date.getHours() - 8);
+  return date;
 }
 
 /**
@@ -45,9 +45,9 @@ export function julianDateToDate(julianDate){
  * 3. 返回处理后的时间字符串，格式为 "YYYY-MM-DD hh:mm:ss.SSS"。
  */
 
-export function julianDateToString(julianDate){
-    const str = Cesium.JulianDate.toIso8601(julianDate)
-    return str.replace("T", " ").replace("Z", "")
+export function julianDateToString(julianDate) {
+  const str = Cesium.JulianDate.toIso8601(julianDate);
+  return str.replace("T", " ").replace("Z", "");
 }
 
 /**
@@ -61,8 +61,8 @@ export function julianDateToString(julianDate){
  * 2. 使用 Cesium 的 `JulianDate.fromIso8601` 方法进行转换，返回与之对应的儒略日格式时间。
  */
 
-export function julianDateFromIso8601(iso8601){
-    return Cesium.JulianDate.fromIso8601(iso8601)
+export function julianDateFromIso8601(iso8601) {
+  return Cesium.JulianDate.fromIso8601(iso8601);
 }
 
 /**
@@ -76,7 +76,6 @@ export function julianDateFromIso8601(iso8601){
  * 2. 使用 Cesium 的 `JulianDate.fromDate` 方法进行转换，返回与之对应的儒略日格式时间。
  */
 
-export function julianDateFromDate(date){
-    return Cesium.JulianDate.fromDate(date);
+export function julianDateFromDate(date) {
+  return Cesium.JulianDate.fromDate(date);
 }
-

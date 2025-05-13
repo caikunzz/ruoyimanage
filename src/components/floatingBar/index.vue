@@ -1,31 +1,38 @@
 <template>
   <vue-draggable-resizable
-      class-name="floating-bar-contain"
-      class-name-handle="floating-bar-handle"
-      ref="float-bar-ref"
-      :w="f_width"
-      :h="f_height"
-      :x="f_left"
-      :y="f_top"
-      :minw="f_min_width"
-      :minh="f_min_height"
-      :z="999"
-      :handles="['tm', 'bm']"
-      :resizable="resizable"
-      :draggable="draggable"
-      drag-handle=".top-title-bar"
-      :parent="false"
-      v-show="visible"
-      :onResize="onResizeCallback"
-      :onDrag="onDragCallback"
+    class-name="floating-bar-contain"
+    class-name-handle="floating-bar-handle"
+    ref="float-bar-ref"
+    :w="f_width"
+    :h="f_height"
+    :x="f_left"
+    :y="f_top"
+    :minw="f_min_width"
+    :minh="f_min_height"
+    :z="999"
+    :handles="['tm', 'bm']"
+    :resizable="resizable"
+    :draggable="draggable"
+    drag-handle=".top-title-bar"
+    :parent="false"
+    v-show="visible"
+    :onResize="onResizeCallback"
+    :onDrag="onDragCallback"
   >
     <div class="float-bar-warpper" v-if="visible">
       <!--  顶部标题栏  -->
       <div class="top-title-bar">
         <span>{{ title }}</span>
         <div>
-          <span v-if="resizable" @click="resizeQuick" style="cursor: pointer"><i class="iconfont" :class="isBig?'icon-suoxiao1':'icon-fangda1'"></i></span>
-          <span @click="closeDialog" style="cursor: pointer;margin-left: 5px"><i class="el-icon-minus"></i></span>
+          <span v-if="resizable" @click="resizeQuick" style="cursor: pointer"
+            ><i
+              class="iconfont"
+              :class="isBig ? 'icon-suoxiao1' : 'icon-fangda1'"
+            ></i
+          ></span>
+          <span @click="closeDialog" style="cursor: pointer; margin-left: 5px"
+            ><i class="el-icon-minus"></i
+          ></span>
         </div>
       </div>
       <div class="floating-body">
@@ -37,60 +44,59 @@
 </template>
 
 <script>
-import vueDraggableResizable from "vue-draggable-resizable"
-import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import vueDraggableResizable from "vue-draggable-resizable";
+import "vue-draggable-resizable/dist/VueDraggableResizable.css";
 
 export default {
   name: "index",
-  components: {vueDraggableResizable},
+  components: { vueDraggableResizable },
   props: {
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
     draggable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     resizable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     title: {
       type: String,
-      default: "悬浮框"
+      default: "悬浮框",
     },
     width: {
       type: [String, Number],
     },
     minWidth: {
-      type: [String, Number]
+      type: [String, Number],
     },
     maxWidth: {
-      type: [String, Number]
+      type: [String, Number],
     },
     height: {
-      type: [String, Number]
+      type: [String, Number],
     },
     minHeight: {
-      type: [String, Number]
+      type: [String, Number],
     },
     maxHeight: {
-      type: [String, Number]
+      type: [String, Number],
     },
     top: {
       type: [String, Number],
-      default: 0
+      default: 0,
     },
     left: {
       type: [String, Number],
-      default: 0
+      default: 0,
     },
     closed: {
       type: Function,
-      default: () => {
-      }
-    }
+      default: () => {},
+    },
   },
   computed: {
     config() {
@@ -103,8 +109,8 @@ export default {
         maxHeight: this.maxHeight,
         top: this.top,
         left: this.left,
-      }
-    }
+      };
+    },
   },
   data() {
     return {
@@ -117,99 +123,103 @@ export default {
       f_min_height: null,
       f_max_height: null,
       f_top: null,
-      f_left: null
-    }
+      f_left: null,
+    };
   },
   watch: {
     visible(val) {
-      this.$emit('input', val)
+      this.$emit("input", val);
     },
     value(val) {
-      this.visible = val
+      this.visible = val;
     },
-    "config": {
+    config: {
       handler(val) {
-        this.refreshSize(val)
-      }
-    }
+        this.refreshSize(val);
+      },
+    },
   },
   methods: {
-    resizeQuick(){
-      this.isBig = !this.isBig
+    resizeQuick() {
+      this.isBig = !this.isBig;
       // this.$refs["float-bar-ref"].width = this.isBig ? this.config.maxWidth : this.config.width;
-      this.$refs["float-bar-ref"].height = this.isBig ? this.config.maxHeight : this.config.height;
-      this.$emit("resizing",
-          null,
-          this.$refs["float-bar-ref"].left,
-          this.$refs["float-bar-ref"].top,
-          this.$refs["float-bar-ref"].width,
-          this.$refs["float-bar-ref"].height)
+      this.$refs["float-bar-ref"].height = this.isBig
+        ? this.config.maxHeight
+        : this.config.height;
+      this.$emit(
+        "resizing",
+        null,
+        this.$refs["float-bar-ref"].left,
+        this.$refs["float-bar-ref"].top,
+        this.$refs["float-bar-ref"].width,
+        this.$refs["float-bar-ref"].height
+      );
     },
     closeDialog() {
-      this.visible = false
+      this.visible = false;
     },
     refreshSize(config) {
       this.$nextTick(() => {
         if (config.width !== undefined) {
-          this.f_width = config.width
+          this.f_width = config.width;
           this.$refs["float-bar-ref"].width = config.width;
         }
         if (config.minWidth !== undefined) {
-          this.f_min_width = config.minWidth
+          this.f_min_width = config.minWidth;
           this.$refs["float-bar-ref"].minW = config.minWidth;
         }
         if (config.maxWidth !== undefined) {
-          this.f_max_width = config.maxWidth
+          this.f_max_width = config.maxWidth;
           this.$refs["float-bar-ref"].maxW = config.maxWidth;
         }
         if (config.height !== undefined) {
-          this.f_height = config.height
+          this.f_height = config.height;
           this.$refs["float-bar-ref"].height = config.height;
         }
         if (config.minHeight !== undefined) {
-          this.f_min_height = config.minHeight
+          this.f_min_height = config.minHeight;
           this.$refs["float-bar-ref"].minH = config.minHeight;
         }
         if (config.maxHeight !== undefined) {
-          this.f_max_height = config.maxHeight
+          this.f_max_height = config.maxHeight;
           this.$refs["float-bar-ref"].maxH = config.maxHeight;
         }
         if (config.top !== undefined) {
-          this.f_top = config.top
+          this.f_top = config.top;
           this.$refs["float-bar-ref"].top = config.top;
         }
         if (config.left !== undefined) {
-          this.f_left = config.left
+          this.f_left = config.left;
           this.$refs["float-bar-ref"].left = config.left;
         }
-      })
+      });
     },
     onResizeCallback(handle, x, y, width, height) {
-      this.$refs["float-bar-ref"].width = width
-      this.$refs["float-bar-ref"].height = height
-      this.$emit("resizing", handle, x, y, width, height)
+      this.$refs["float-bar-ref"].width = width;
+      this.$refs["float-bar-ref"].height = height;
+      this.$emit("resizing", handle, x, y, width, height);
     },
-    onDragCallback(x, y){
-      this.$emit("dragging", x, y)
-    }
+    onDragCallback(x, y) {
+      this.$emit("dragging", x, y);
+    },
   },
   mounted() {
     // 挂载到body中
     document.getElementById("app").appendChild(this.$el);
-    this.$nextTick(()=>{
-      this.refreshSize(this.config)
-    })
+    this.$nextTick(() => {
+      this.refreshSize(this.config);
+    });
   },
   destroyed() {
-    this.closed()
-  }
-}
+    this.closed();
+  },
+};
 </script>
 
 <style lang="less" scoped>
 .floating-bar-contain {
   position: absolute;
-  opacity: .85;
+  opacity: 0.85;
   top: 0;
   left: 0;
   box-sizing: content-box;
@@ -225,7 +235,12 @@ export default {
       line-height: 30px;
       padding: 0 5px;
       box-sizing: border-box;
-      background: linear-gradient(90deg, rgba(39, 67, 132, 1) 0%, rgba(54, 91, 180, 1) 100%), rgba(169, 190, 222, 1);
+      background: linear-gradient(
+          90deg,
+          rgba(39, 67, 132, 1) 0%,
+          rgba(54, 91, 180, 1) 100%
+        ),
+        rgba(169, 190, 222, 1);
       color: white;
       display: flex;
       flex-flow: row nowrap;
@@ -251,7 +266,7 @@ export default {
 }
 </style>
 <style>
-.floating-bar-handle{
+.floating-bar-handle {
   background-color: transparent;
   width: 100%;
   height: 8px;

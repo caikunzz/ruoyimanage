@@ -1,4 +1,4 @@
-const Cesium = window.Cesium
+const Cesium = window.Cesium;
 
 /**
  * 经纬度转笛卡尔坐标系
@@ -14,11 +14,19 @@ const Cesium = window.Cesium
  * 4. 返回值是 Cesium 的 `Cartesian3` 对象，包含三个坐标值：`x`, `y`, 和 `z`。
  */
 
-export function latitudeAndLongitudeToDegrees(latitudeAndLongitude, autoHeight) {
-    const lng = latitudeAndLongitude[0]
-    const lat = latitudeAndLongitude[1]
-    const height = latitudeAndLongitude.length > 2 ? latitudeAndLongitude[2] : autoHeight ? getHeightAtPosition : 0
-    return Cesium.Cartesian3.fromDegrees(lng, lat, height);
+export function latitudeAndLongitudeToDegrees(
+  latitudeAndLongitude,
+  autoHeight
+) {
+  const lng = latitudeAndLongitude[0];
+  const lat = latitudeAndLongitude[1];
+  const height =
+    latitudeAndLongitude.length > 2
+      ? latitudeAndLongitude[2]
+      : autoHeight
+      ? getHeightAtPosition
+      : 0;
+  return Cesium.Cartesian3.fromDegrees(lng, lat, height);
 }
 /**
  * 获取经纬度所在地高度
@@ -35,16 +43,20 @@ export function latitudeAndLongitudeToDegrees(latitudeAndLongitude, autoHeight) 
  */
 
 function getHeightAtPosition(point) {
-    return new Promise(resolve => {
-        const cartographic = Cesium.Cartographic.fromCartesian(latitudeAndLongitudeToDegrees(point));
-        // 调用 sampleTerrain 方法获取高度信息
-        Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [cartographic]).then(function (updatedPositions) {
-            // const longitude = Cesium.Math.toDegrees(cartographic.longitude);
-            // const latitude = Cesium.Math.toDegrees(cartographic.latitude);
-            const height = updatedPositions[0].height;
-            resolve(height)
-        });
-    })
+  return new Promise((resolve) => {
+    const cartographic = Cesium.Cartographic.fromCartesian(
+      latitudeAndLongitudeToDegrees(point)
+    );
+    // 调用 sampleTerrain 方法获取高度信息
+    Cesium.sampleTerrainMostDetailed(this.viewer.terrainProvider, [
+      cartographic,
+    ]).then(function (updatedPositions) {
+      // const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+      // const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+      const height = updatedPositions[0].height;
+      resolve(height);
+    });
+  });
 }
 /**
  * 经纬度转笛卡尔坐标
@@ -61,14 +73,14 @@ function getHeightAtPosition(point) {
  */
 
 export function transformWGS84ToCartesian(position) {
-    return position
-        ? Cesium.Cartesian3.fromDegrees(
-            position.x,
-            position.y,
-            position.z,
-            Cesium.Ellipsoid.WGS84
-        )
-        : Cesium.Cartesian3.ZERO;
+  return position
+    ? Cesium.Cartesian3.fromDegrees(
+        position.x,
+        position.y,
+        position.z,
+        Cesium.Ellipsoid.WGS84
+      )
+    : Cesium.Cartesian3.ZERO;
 }
 
 /**
@@ -85,11 +97,11 @@ export function transformWGS84ToCartesian(position) {
  */
 
 export function degreesToLatitudeAndLongitude(cartesian) {
-    const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-    const longitude = Cesium.Math.toDegrees(cartographic.longitude);
-    const latitude = Cesium.Math.toDegrees(cartographic.latitude);
-    const height = cartographic.height;
-    return [longitude, latitude, height]
+  const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+  const longitude = Cesium.Math.toDegrees(cartographic.longitude);
+  const latitude = Cesium.Math.toDegrees(cartographic.latitude);
+  const height = cartographic.height;
+  return [longitude, latitude, height];
 }
 
 /**
@@ -106,12 +118,12 @@ export function degreesToLatitudeAndLongitude(cartesian) {
  */
 
 export function transformCartesianToWGS84(cartesian) {
-    let ellipsoid = Cesium.Ellipsoid.WGS84;
-    let cartographic = ellipsoid.cartesianToCartographic(cartesian);
-    const x = Cesium.Math.toDegrees(cartographic.longitude);
-    const y = Cesium.Math.toDegrees(cartographic.latitude);
-    const z = cartographic.height;
-    return {x, y, z};
+  let ellipsoid = Cesium.Ellipsoid.WGS84;
+  let cartographic = ellipsoid.cartesianToCartographic(cartesian);
+  const x = Cesium.Math.toDegrees(cartographic.longitude);
+  const y = Cesium.Math.toDegrees(cartographic.latitude);
+  const z = cartographic.height;
+  return { x, y, z };
 }
 
 /**
@@ -130,47 +142,46 @@ export function transformCartesianToWGS84(cartesian) {
  */
 
 export function getCatesian3FromPX(viewer, px) {
-    let cartesian = null;
-    let isOn3dtiles = false;
-    let isOnTerrain = false;
+  let cartesian = null;
+  let isOn3dtiles = false;
+  let isOnTerrain = false;
 
-    // 深度拾取方式
-    let picks = viewer.scene.drillPick(px);
+  // 深度拾取方式
+  let picks = viewer.scene.drillPick(px);
 
-    for (let pick of picks) {
-        if (pick) {
-            if (pick.primitive instanceof Cesium.Cesium3DTileFeature) {
-                // 处理3D Tiles的拾取
-                isOn3dtiles = true;
-                return viewer.scene.pickPosition(px);
-            } else if (pick.primitive instanceof Cesium.Model) {
-                // 处理模型的拾取
-                isOn3dtiles = true;
-                return viewer.scene.pickPosition(px);
-            }
-            // 可以继续添加其他类型的拾取判断
-        }
+  for (let pick of picks) {
+    if (pick) {
+      if (pick.primitive instanceof Cesium.Cesium3DTileFeature) {
+        // 处理3D Tiles的拾取
+        isOn3dtiles = true;
+        return viewer.scene.pickPosition(px);
+      } else if (pick.primitive instanceof Cesium.Model) {
+        // 处理模型的拾取
+        isOn3dtiles = true;
+        return viewer.scene.pickPosition(px);
+      }
+      // 可以继续添加其他类型的拾取判断
     }
+  }
 
-    let noTerrain =
-        viewer.terrainProvider instanceof Cesium.EllipsoidTerrainProvider; // 判断是否有地形
+  let noTerrain =
+    viewer.terrainProvider instanceof Cesium.EllipsoidTerrainProvider; // 判断是否有地形
 
-    // 在地形上拾取位置点
-    if (!isOn3dtiles && !noTerrain) {
-        let ray = viewer.scene.camera.getPickRay(px);
-        if (!ray) return null;
-        isOnTerrain = true;
-        cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-    }
+  // 在地形上拾取位置点
+  if (!isOn3dtiles && !noTerrain) {
+    let ray = viewer.scene.camera.getPickRay(px);
+    if (!ray) return null;
+    isOnTerrain = true;
+    cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+  }
 
-    // 在普通地球上拾取位置点
-    if (!isOn3dtiles && !isOnTerrain && noTerrain) {
-        cartesian = viewer.scene.camera.pickEllipsoid(
-            px,
-            viewer.scene.globe.ellipsoid
-        );
-    }
+  // 在普通地球上拾取位置点
+  if (!isOn3dtiles && !isOnTerrain && noTerrain) {
+    cartesian = viewer.scene.camera.pickEllipsoid(
+      px,
+      viewer.scene.globe.ellipsoid
+    );
+  }
 
-    return cartesian;
+  return cartesian;
 }
-

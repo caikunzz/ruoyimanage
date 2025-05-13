@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4132765 */
-  src: url('iconfont.woff2?t=1740454529819') format('woff2'),
-       url('iconfont.woff?t=1740454529819') format('woff'),
-       url('iconfont.ttf?t=1740454529819') format('truetype');
+  src: url("iconfont.woff2?t=1740454529819") format("woff2"),
+    url("iconfont.woff?t=1740454529819") format("woff"),
+    url("iconfont.ttf?t=1740454529819") format("truetype");
 }
 
 .iconfont {
@@ -560,4 +560,3 @@
 .icon-jiaoben:before {
   content: "\e764";
 }
-

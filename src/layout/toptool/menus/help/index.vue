@@ -1,19 +1,18 @@
 <template>
-  <div class="tool-menu-item" @click="handleHelp">
-    帮助
-  </div>
+  <div class="tool-menu-item" @click="handleHelp">帮助</div>
 </template>
 
 <script>
-
 export default {
   name: "index",
   methods: {
     handleHelp() {
-      window.open(`http://${window.location.hostname}:8181/docs/szhzlk_bzsc/szhzlk_bzsc-1g42as6fnocso`)
-    }
-  }
-}
+      window.open(
+        `http://${window.location.hostname}:8181/docs/szhzlk_bzsc/szhzlk_bzsc-1g42as6fnocso`
+      );
+    },
+  },
+};
 </script>
 
 <style scoped>

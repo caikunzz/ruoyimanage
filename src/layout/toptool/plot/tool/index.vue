@@ -3,12 +3,13 @@
     <div class="plot-unit-item-body">
       <!--  二维图标标绘  -->
       <el-popover
-          popper-class="unit-item-popper"
-          placement="bottom"
-          :visible-arrow="false"
-          trigger="click">
+        popper-class="unit-item-popper"
+        placement="bottom"
+        :visible-arrow="false"
+        trigger="click"
+      >
         <div class="popover-component">
-          <icon-plotting/>
+          <icon-plotting />
         </div>
         <div slot="reference" class="unit-btn">
           <div class="unit-btn-top">
@@ -20,12 +21,13 @@
       </el-popover>
       <!--  三维模型标绘  -->
       <el-popover
-          popper-class="unit-item-popper"
-          placement="bottom"
-          :visible-arrow="false"
-          trigger="click">
+        popper-class="unit-item-popper"
+        placement="bottom"
+        :visible-arrow="false"
+        trigger="click"
+      >
         <div class="popover-component">
-          <model-plotting/>
+          <model-plotting />
         </div>
         <div slot="reference" class="unit-btn">
           <div class="unit-btn-top">
@@ -37,12 +39,13 @@
       </el-popover>
       <!--  态势箭头标绘  -->
       <el-popover
-          popper-class="unit-item-popper"
-          placement="bottom"
-          :visible-arrow="false"
-          trigger="click">
+        popper-class="unit-item-popper"
+        placement="bottom"
+        :visible-arrow="false"
+        trigger="click"
+      >
         <div class="popover-component">
-          <situation-plotting/>
+          <situation-plotting />
         </div>
         <div slot="reference" class="unit-btn">
           <div class="unit-btn-top">
@@ -54,12 +57,13 @@
       </el-popover>
       <!--  动画标绘  -->
       <el-popover
-          popper-class="unit-item-popper"
-          placement="bottom"
-          :visible-arrow="false"
-          trigger="click">
+        popper-class="unit-item-popper"
+        placement="bottom"
+        :visible-arrow="false"
+        trigger="click"
+      >
         <div class="popover-component">
-          <particles-plotting/>
+          <particles-plotting />
         </div>
         <div slot="reference" class="unit-btn">
           <div class="unit-btn-top">
@@ -71,10 +75,11 @@
       </el-popover>
       <!--  音频标绘  -->
       <el-popover
-          popper-class="unit-item-popper"
-          placement="bottom"
-          :visible-arrow="false"
-          trigger="click">
+        popper-class="unit-item-popper"
+        placement="bottom"
+        :visible-arrow="false"
+        trigger="click"
+      >
         <div class="popover-component">
           <audio-group />
         </div>
@@ -88,10 +93,11 @@
       </el-popover>
       <!--  视频  -->
       <el-popover
-          popper-class="unit-item-popper"
-          placement="bottom"
-          :visible-arrow="false"
-          trigger="click">
+        popper-class="unit-item-popper"
+        placement="bottom"
+        :visible-arrow="false"
+        trigger="click"
+      >
         <div class="popover-component">
           <video-group />
         </div>
@@ -108,7 +114,7 @@
         <div class="unit-btn-top">
           <i class="iconfont icon-zimu"></i>
           <span>字幕</span>
-          <caption-plotting ref="captionRef"/>
+          <caption-plotting ref="captionRef" />
         </div>
       </div>
       <!--  添加文字  -->
@@ -140,23 +146,23 @@ export default {
     modelPlotting,
     situationPlotting,
     audioGroup,
-    videoGroup
+    videoGroup,
   },
   methods: {
     /** 添加文字 */
     createText() {
-      this.$cesiumHelper.text.addText({position: [184, 130]}).then(res => {
-        const info = this.$cesiumHelper.getEntityInfo(res)
-        this.$store.dispatch("addEntitySource", info)
-      })
+      this.$cesiumHelper.text.addText({ position: [184, 130] }).then((res) => {
+        const info = this.$cesiumHelper.getEntityInfo(res);
+        this.$store.dispatch("addEntitySource", info);
+      });
     },
 
     /** 打开字幕编辑表 */
-    openCaption(){
-      this.$refs.captionRef.openOutDialog()
-    }
-  }
-}
+    openCaption() {
+      this.$refs.captionRef.openOutDialog();
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -174,7 +180,7 @@ export default {
 }
 
 .unit-btn:hover {
-  background-color: #D2D2D2;
+  background-color: #d2d2d2;
 }
 
 .unit-btn > i {
@@ -202,13 +208,13 @@ export default {
 }
 
 /deep/ .el-tabs__nav-scroll {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 /deep/ .el-collapse-item__header {
   padding: 0 10px;
   height: 30px;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
 }
 
 /deep/ .el-tabs__item {
@@ -222,7 +228,7 @@ export default {
 
 /deep/ .el-tabs__item.is-active {
   color: #000000 !important;
-  background-color: #EBEBEB !important;
+  background-color: #ebebeb !important;
 }
 </style>
 

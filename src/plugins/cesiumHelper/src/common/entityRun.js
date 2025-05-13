@@ -16,35 +16,50 @@ const EARTH_RADIUS = 6371; // 地球半径（千米）
  */
 
 export function generateTime(options) {
-    console.log(options)
-    let startTime
-    let endTime
-    if(options.difference){
-        let start = Cesium.JulianDate.fromIso8601(options.times.start);
-        endTime = Cesium.JulianDate.addSeconds(start, options.difference, new Cesium.JulianDate());
-    }else {
-        endTime = Cesium.JulianDate.fromIso8601(options.times.end);
-    }
-    startTime = Cesium.JulianDate.fromIso8601(options.times.start);
-    let timeG = [Cesium.JulianDate.toIso8601(startTime, PRECISION)];
-    const timeDifferenceInSeconds = Cesium.JulianDate.secondsDifference(endTime, startTime);
-    // 计算距离和总距离
-    const { distances, totalDistance } = calculateDistances(options.path);
+  console.log(options);
+  let startTime;
+  let endTime;
+  if (options.difference) {
+    let start = Cesium.JulianDate.fromIso8601(options.times.start);
+    endTime = Cesium.JulianDate.addSeconds(
+      start,
+      options.difference,
+      new Cesium.JulianDate()
+    );
+  } else {
+    endTime = Cesium.JulianDate.fromIso8601(options.times.end);
+  }
+  startTime = Cesium.JulianDate.fromIso8601(options.times.start);
+  let timeG = [Cesium.JulianDate.toIso8601(startTime, PRECISION)];
+  const timeDifferenceInSeconds = Cesium.JulianDate.secondsDifference(
+    endTime,
+    startTime
+  );
+  // 计算距离和总距离
+  const { distances, totalDistance } = calculateDistances(options.path);
 
-    // 计算每个点到下一个点需要的时间
-    const timeIntervals = calculateTimeIntervals(distances, timeDifferenceInSeconds, totalDistance);
+  // 计算每个点到下一个点需要的时间
+  const timeIntervals = calculateTimeIntervals(
+    distances,
+    timeDifferenceInSeconds,
+    totalDistance
+  );
 
-    // 输出每个点到下一个点需要的时间
-    for (let i = 0; i < timeIntervals.length; i++) {
-        const secondsToAdd = timeIntervals[i];
-        const newTime = Cesium.JulianDate.addSeconds(startTime, secondsToAdd, new Cesium.JulianDate());
-        timeG.push(Cesium.JulianDate.toIso8601(newTime, PRECISION));
-        if(i === timeIntervals.length-1){
-            timeG[timeG.length - 1] = Cesium.JulianDate.toIso8601(endTime, PRECISION)
-        }
-        startTime = newTime;
+  // 输出每个点到下一个点需要的时间
+  for (let i = 0; i < timeIntervals.length; i++) {
+    const secondsToAdd = timeIntervals[i];
+    const newTime = Cesium.JulianDate.addSeconds(
+      startTime,
+      secondsToAdd,
+      new Cesium.JulianDate()
+    );
+    timeG.push(Cesium.JulianDate.toIso8601(newTime, PRECISION));
+    if (i === timeIntervals.length - 1) {
+      timeG[timeG.length - 1] = Cesium.JulianDate.toIso8601(endTime, PRECISION);
     }
-    return timeG;
+    startTime = newTime;
+  }
+  return timeG;
 }
 /**
  * 根据数据渲染实体运动动画
@@ -60,15 +75,19 @@ export function generateTime(options) {
  */
 
 export function computedRunPoints(options) {
-    // 创建 SampledPositionProperty 对象
-    const positionProperty = new Cesium.SampledPositionProperty();
-    for (let i = 0; i < options.position.points.length; i++) {
-        const point = options.position.points[i];
-        const time = Cesium.JulianDate.fromIso8601(options.position.times[i]);
-        const position = Cesium.Cartesian3.fromDegrees(point[0], point[1], point[2]);
-        positionProperty.addSample(time, position);
-    }
-    return positionProperty
+  // 创建 SampledPositionProperty 对象
+  const positionProperty = new Cesium.SampledPositionProperty();
+  for (let i = 0; i < options.position.points.length; i++) {
+    const point = options.position.points[i];
+    const time = Cesium.JulianDate.fromIso8601(options.position.times[i]);
+    const position = Cesium.Cartesian3.fromDegrees(
+      point[0],
+      point[1],
+      point[2]
+    );
+    positionProperty.addSample(time, position);
+  }
+  return positionProperty;
 }
 /**
  * 根据行驶速度返回每个点所需要时间
@@ -84,18 +103,25 @@ export function computedRunPoints(options) {
  */
 
 export function generateSpeedTime(options) {
-    let startTime = Cesium.JulianDate.fromIso8601(options.startTime);
-    // 计算每个点之间的行驶时间
-    const timesBetweenPoints = calculateTimeBetweenPoints(options.path, options.speed * 10);
-    let timeJ = [Cesium.JulianDate.toIso8601(startTime, PRECISION)];
-    for (let i = 0; i < timesBetweenPoints.length; i++) {
-        const secondsToAdd = timesBetweenPoints[i];
-        const newTime = Cesium.JulianDate.addSeconds(startTime, secondsToAdd, new Cesium.JulianDate());
-        timeJ.push(Cesium.JulianDate.toIso8601(newTime, PRECISION));
-        startTime = newTime;
-    }
+  let startTime = Cesium.JulianDate.fromIso8601(options.startTime);
+  // 计算每个点之间的行驶时间
+  const timesBetweenPoints = calculateTimeBetweenPoints(
+    options.path,
+    options.speed * 10
+  );
+  let timeJ = [Cesium.JulianDate.toIso8601(startTime, PRECISION)];
+  for (let i = 0; i < timesBetweenPoints.length; i++) {
+    const secondsToAdd = timesBetweenPoints[i];
+    const newTime = Cesium.JulianDate.addSeconds(
+      startTime,
+      secondsToAdd,
+      new Cesium.JulianDate()
+    );
+    timeJ.push(Cesium.JulianDate.toIso8601(newTime, PRECISION));
+    startTime = newTime;
+  }
 
-    return timeJ;
+  return timeJ;
 }
 
 /**
@@ -113,7 +139,7 @@ export function generateSpeedTime(options) {
  */
 
 function calculateTimeIntervals(distances, totalSeconds, totalDistance) {
-    return distances.map((distance) => (distance / totalDistance) * totalSeconds);
+  return distances.map((distance) => (distance / totalDistance) * totalSeconds);
 }
 
 /**
@@ -129,18 +155,18 @@ function calculateTimeIntervals(distances, totalSeconds, totalDistance) {
  */
 
 function calculateDistances(points) {
-    const distances = [];
-    let totalDistance = 0;
+  const distances = [];
+  let totalDistance = 0;
 
-    for (let i = 1; i < points.length; i++) {
-        const prevPoint = points[i - 1];
-        const currentPoint = points[i];
-        const distance = calculateHaversineDistance(prevPoint, currentPoint);
-        distances.push(distance);
-        totalDistance += distance;
-    }
+  for (let i = 1; i < points.length; i++) {
+    const prevPoint = points[i - 1];
+    const currentPoint = points[i];
+    const distance = calculateHaversineDistance(prevPoint, currentPoint);
+    distances.push(distance);
+    totalDistance += distance;
+  }
 
-    return { distances, totalDistance };
+  return { distances, totalDistance };
 }
 
 /**
@@ -158,12 +184,12 @@ function calculateDistances(points) {
  */
 
 function calculateTimeBetweenPoints(points, speed) {
-    return points.slice(0, -1).map((point, i) => {
-        const nextPoint = points[i + 1];
-        const distance = calculateHaversineDistance(point, nextPoint);
-        const timeInHours = distance / speed;
-        return timeInHours * 3600; // 转换为秒
-    });
+  return points.slice(0, -1).map((point, i) => {
+    const nextPoint = points[i + 1];
+    const distance = calculateHaversineDistance(point, nextPoint);
+    const timeInHours = distance / speed;
+    return timeInHours * 3600; // 转换为秒
+  });
 }
 
 /**
@@ -181,18 +207,21 @@ function calculateTimeBetweenPoints(points, speed) {
  */
 
 function calculateHaversineDistance(point1, point2) {
-    const [lat1, lon1] = point1;
-    const [lat2, lon2] = point2;
+  const [lat1, lon1] = point1;
+  const [lat2, lon2] = point2;
 
-    const radLat1 = (Math.PI * lat1) / 180;
-    const radLat2 = (Math.PI * lat2) / 180;
-    const deltaLat = (Math.PI * (lat2 - lat1)) / 180;
-    const deltaLon = (Math.PI * (lon2 - lon1)) / 180;
+  const radLat1 = (Math.PI * lat1) / 180;
+  const radLat2 = (Math.PI * lat2) / 180;
+  const deltaLat = (Math.PI * (lat2 - lat1)) / 180;
+  const deltaLon = (Math.PI * (lon2 - lon1)) / 180;
 
-    const a =
-        Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-        Math.cos(radLat1) * Math.cos(radLat2) * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const a =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(radLat1) *
+      Math.cos(radLat2) *
+      Math.sin(deltaLon / 2) *
+      Math.sin(deltaLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return EARTH_RADIUS * c;
+  return EARTH_RADIUS * c;
 }

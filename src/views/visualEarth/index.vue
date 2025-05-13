@@ -3,9 +3,9 @@
     <!-- Cesium 地球 -->
     <div id="cesiumContainer">
       <!--   顶部导航窗格组件   -->
-      <top-tool class="top-tool-bar"/>
+      <top-tool class="top-tool-bar" />
       <!--   实体信息编辑栏   -->
-      <info-edit-bar class="entity-info-bar" ref="entityEditRef"/>
+      <info-edit-bar class="entity-info-bar" ref="entityEditRef" />
       <!--   实体右键菜单   -->
       <contextmenu ref="entityContextMenuRef" />
       <!--   此处加三个小按钮   -->
@@ -23,10 +23,10 @@
 </template>
 
 <script>
-import topTool from "@/layout/toptool"
+import topTool from "@/layout/toptool";
 import infoEditBar from "@/components/infoEditBar/index.vue";
 import contextmenu from "@/views/visualEarth/contextmenu.vue";
-import testVue from "./test.vue"
+import testVue from "./test.vue";
 import Vue from "vue";
 import CesiumHelper from "@/plugins/cesiumHelper";
 import WebsocketHelper from "@/utils/websocket";
@@ -39,31 +39,30 @@ export default {
     topTool,
     infoEditBar,
     contextmenu,
-    testVue
+    testVue,
   },
   data() {
     return {
       /* 当前视角 */
       is2d: false,
-    }
+    };
   },
   computed: {
     room() {
-      return this.$route.query.room
+      return this.$route.query.room;
     },
   },
   watch: {
     room: {
       handler(val) {
         if (val) {
-          this.initWebsocket()
+          this.initWebsocket();
         }
       },
-      immediate: true
+      immediate: true,
     },
   },
   methods: {
-
     /** 右键单击菜单 */
     contextMenu(event, entity) {
       this.$refs.entityContextMenuRef.show(event, entity);
@@ -81,34 +80,37 @@ export default {
         showPositionInfo: false,
         enableLighting: false,
         highDynamicRange: false,
-        splitLayers: process.env.VUE_APP_MAP_API + "/pieces2/world/{z}/{x}/{y}.jpg",
-        imageryLayers: process.env.VUE_APP_MAP_API + "/pieces1/world/{z}/{x}/{y}.png",
-        terrainProvider: process.env.VUE_APP_MAP_API+ "/terrain/",
-        clock: { // 系统时间
+        splitLayers:
+          process.env.VUE_APP_MAP_API + "/pieces2/world/{z}/{x}/{y}.jpg",
+        imageryLayers:
+          process.env.VUE_APP_MAP_API + "/pieces1/world/{z}/{x}/{y}.png",
+        terrainProvider: process.env.VUE_APP_MAP_API + "/terrain/",
+        clock: {
+          // 系统时间
           startTime: this.$store.state.cesium.availability.split("/")[0],
           endTime: this.$store.state.cesium.availability.split("/")[1],
-          currentTime: this.$store.state.cesium.currentTime
+          currentTime: this.$store.state.cesium.currentTime,
         },
         userData: {
-          author: localStorage.getItem("username")
-        }
-      })
+          author: localStorage.getItem("username"),
+        },
+      });
 
       cesiumHelper.bindContextmenu(this.contextMenu.bind(this));
 
-      Vue.prototype.$cesiumHelper = cesiumHelper
-      const root = cesiumHelper.viewer.root
-      this.$store.dispatch("addEntitySource", cesiumHelper.getEntityInfo(root))
+      Vue.prototype.$cesiumHelper = cesiumHelper;
+      const root = cesiumHelper.viewer.root;
+      this.$store.dispatch("addEntitySource", cesiumHelper.getEntityInfo(root));
     },
 
     /** 修改视角 2/3维 */
     changeLayer() {
       if (this.is2d) {
-        this.is2d = false
-        this.$cesiumHelper.removeLocalityMap2d()
+        this.is2d = false;
+        this.$cesiumHelper.removeLocalityMap2d();
       } else {
-        this.$cesiumHelper.loadingLocalityMap2d()
-        this.is2d = true
+        this.$cesiumHelper.loadingLocalityMap2d();
+        this.is2d = true;
       }
     },
 
@@ -119,71 +121,83 @@ export default {
      * @param {*} time 2000-01-01T00:00:00Z
      * @param {*} point 经纬度
      * */
-    func(id, time, point){
-      const Cesium = window.Cesium
-      const source = this.getEntityById(id)
-      time = Cesium.JulianDate.fromIso8601(time)
-      point = plottingUtils.latitudeAndLongitudeToDegrees(point)
-      if(source.position instanceof Cesium.SampledPositionProperty){
-        source.position.removeSample(Cesium.JulianDate.fromIso8601("2099-01-01T00:00:00.000Z"))
-        source.position.addSample(time,point)
-        source.position.addSample(Cesium.JulianDate.fromIso8601("2099-01-01T00:00:00.000Z"),point)
-      }else {
+    func(id, time, point) {
+      const Cesium = window.Cesium;
+      const source = this.getEntityById(id);
+      time = Cesium.JulianDate.fromIso8601(time);
+      point = plottingUtils.latitudeAndLongitudeToDegrees(point);
+      if (source.position instanceof Cesium.SampledPositionProperty) {
+        source.position.removeSample(
+          Cesium.JulianDate.fromIso8601("2099-01-01T00:00:00.000Z")
+        );
+        source.position.addSample(time, point);
+        source.position.addSample(
+          Cesium.JulianDate.fromIso8601("2099-01-01T00:00:00.000Z"),
+          point
+        );
+      } else {
         const positionProperty = new Cesium.SampledPositionProperty();
-        positionProperty.addSample(time,point)
-        positionProperty.addSample(Cesium.JulianDate.fromIso8601("2099-01-01T00:00:00.000Z"),point)
-        source.position = positionProperty
+        positionProperty.addSample(time, point);
+        positionProperty.addSample(
+          Cesium.JulianDate.fromIso8601("2099-01-01T00:00:00.000Z"),
+          point
+        );
+        source.position = positionProperty;
       }
     },
 
     // 初始化websocket
     initWebsocket() {
       if (this.$websocketHelper) {
-        this.$websocketHelper.close()
-        delete Vue.prototype.$websocketHelper
+        this.$websocketHelper.close();
+        delete Vue.prototype.$websocketHelper;
       }
-      socketApi.getSocketId().then(res => {
-        const socketId = res.data
-        const room = this.$route.query.room
-        Vue.prototype.$websocketHelper = new WebsocketHelper(room, socketId)
-        this.$store.dispatch("setMode", "coordination")
-        Vue.prototype.$websocketHelper.addOnMessageEventListener("plot", this.handleOnMessageEvent.bind(this))
-      })
+      socketApi.getSocketId().then((res) => {
+        const socketId = res.data;
+        const room = this.$route.query.room;
+        Vue.prototype.$websocketHelper = new WebsocketHelper(room, socketId);
+        this.$store.dispatch("setMode", "coordination");
+        Vue.prototype.$websocketHelper.addOnMessageEventListener(
+          "plot",
+          this.handleOnMessageEvent.bind(this)
+        );
+      });
     },
 
     handleOnMessageEvent(message) {
-      const object = JSON.parse(message)
+      const object = JSON.parse(message);
       switch (object.signal) {
         case "plot_insert":
           // TODO 实体插入
-          object.data && this.$cesiumHelper.loadEntity(object.data)
+          object.data && this.$cesiumHelper.loadEntity(object.data);
           break;
         case "plot_update":
           // TODO 实体信息更新
-          object.data && this.$cesiumHelper.updateObjById(object.data.id, object.data)
+          object.data &&
+            this.$cesiumHelper.updateObjById(object.data.id, object.data);
           break;
         case "plot_remove":
           // TODO 实体删除
-          object.data && this.$cesiumHelper.deleteObjById(object.data.id)
+          object.data && this.$cesiumHelper.deleteObjById(object.data.id);
           break;
         case "plot_remove_all":
           // TODO 实体清空
-          object.data && this.$cesiumHelper.removeAll()
+          object.data && this.$cesiumHelper.removeAll();
           break;
         default:
-          // TODO 默认事件
+        // TODO 默认事件
       }
-    }
+    },
   },
   mounted() {
-    this.initCesium()
+    this.initCesium();
   },
   destroyed() {
-    this.$websocketHelper?.close()
-    delete Vue.prototype.$websocketHelper
+    this.$websocketHelper?.close();
+    delete Vue.prototype.$websocketHelper;
     this.$cesiumHelper.bindContextmenu(() => {});
-  }
-}
+  },
+};
 </script>
 
 <style lang="less" scoped>
@@ -247,8 +261,8 @@ export default {
     height: 30px;
     line-height: 30px;
     border-radius: 15px;
-    background-color: #2A2B2E;
-    color: #FFFFFF;
+    background-color: #2a2b2e;
+    color: #ffffff;
     font-size: 14px;
     margin-bottom: 10px;
     cursor: pointer;

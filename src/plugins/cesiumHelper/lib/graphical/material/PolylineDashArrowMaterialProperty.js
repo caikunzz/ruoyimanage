@@ -1,6 +1,5 @@
 const Cesium = window.Cesium;
 
-
 /**
  * #ifdef GL_OES_standard_derivatives
  * #extension GL_OES_standard_derivatives : enable
@@ -106,64 +105,85 @@ const Cesium = window.Cesium;
  * */
 
 class PolylineDashArrowMaterialProperty {
-    constructor(options) {
-        this._definitionChanged = new Cesium.Event();
-        this._color = undefined;
-        this._gapColor = undefined;
-        this._dashLength = undefined;
-        this._dashPattern = undefined;
+  constructor(options) {
+    this._definitionChanged = new Cesium.Event();
+    this._color = undefined;
+    this._gapColor = undefined;
+    this._dashLength = undefined;
+    this._dashPattern = undefined;
 
-        this.color = options.color;
-        this.gapColor = options.gapColor;
-        this.dashLength = options.dashLength;
-        this.dashPattern = options.dashPattern;
+    this.color = options.color;
+    this.gapColor = options.gapColor;
+    this.dashLength = options.dashLength;
+    this.dashPattern = options.dashPattern;
+  }
+
+  get isConstant() {
+    return false;
+  }
+
+  get definitionChanged() {
+    return this._definitionChanged;
+  }
+
+  getType() {
+    return Cesium.Material.PolylineDashArrowType;
+  }
+
+  getValue(time, result) {
+    if (!Cesium.defined(result)) {
+      result = {};
     }
 
-    get isConstant() {
-        return false;
-    }
+    result.color = Cesium.Property.getValueOrDefault(
+      this._color,
+      time,
+      Cesium.Color.RED,
+      result.color
+    );
+    result.gapColor = Cesium.Property.getValueOrDefault(
+      this._gapColor,
+      time,
+      Cesium.Color.TRANSPARENT,
+      result.gapColor
+    );
+    result.dashLength = Cesium.Property.getValueOrDefault(
+      this._dashLength,
+      time,
+      16.0,
+      result.dashLength
+    );
+    result.dashPattern = Cesium.Property.getValueOrDefault(
+      this._dashPattern,
+      time,
+      1.0,
+      result.dashPattern
+    );
 
-    get definitionChanged() {
-        return this._definitionChanged;
-    }
+    return result;
+  }
 
-    getType() {
-        return Cesium.Material.PolylineDashArrowType;
-    }
-
-    getValue(time, result) {
-        if (!Cesium.defined(result)) {
-            result = {};
-        }
-
-        result.color = Cesium.Property.getValueOrDefault(this._color, time, Cesium.Color.RED, result.color);
-        result.gapColor = Cesium.Property.getValueOrDefault(this._gapColor, time, Cesium.Color.TRANSPARENT, result.gapColor);
-        result.dashLength = Cesium.Property.getValueOrDefault(this._dashLength, time, 16.0, result.dashLength);
-        result.dashPattern = Cesium.Property.getValueOrDefault(this._dashPattern, time, 1.0, result.dashPattern);
-
-        return result;
-    }
-
-    equals(other) {
-        return (this === other ||
-            (other instanceof PolylineDashArrowMaterialProperty &&
-                Cesium.Property.equals(this._color, other._color) &&
-                Cesium.Property.equals(this._gapColor, other._gapColor) &&
-                Cesium.Property.equals(this._dashLength, other._dashLength) &&
-                Cesium.Property.equals(this._dashPattern, other._dashPattern))
-        );
-    }
+  equals(other) {
+    return (
+      this === other ||
+      (other instanceof PolylineDashArrowMaterialProperty &&
+        Cesium.Property.equals(this._color, other._color) &&
+        Cesium.Property.equals(this._gapColor, other._gapColor) &&
+        Cesium.Property.equals(this._dashLength, other._dashLength) &&
+        Cesium.Property.equals(this._dashPattern, other._dashPattern))
+    );
+  }
 }
 
 Object.defineProperties(PolylineDashArrowMaterialProperty.prototype, {
-    color: Cesium.createPropertyDescriptor('color'),
-    gapColor: Cesium.createPropertyDescriptor('gapColor'),
-    dashLength: Cesium.createPropertyDescriptor('dashLength'),
-    dashPattern: Cesium.createPropertyDescriptor('dashPattern')
+  color: Cesium.createPropertyDescriptor("color"),
+  gapColor: Cesium.createPropertyDescriptor("gapColor"),
+  dashLength: Cesium.createPropertyDescriptor("dashLength"),
+  dashPattern: Cesium.createPropertyDescriptor("dashPattern"),
 });
 
 Cesium.PolylineDashArrowMaterialProperty = PolylineDashArrowMaterialProperty;
-Cesium.Material.PolylineDashArrowType = 'PolylineDashArrow';
+Cesium.Material.PolylineDashArrowType = "PolylineDashArrow";
 Cesium.Material.PolylineDashArrowSource = `
 #ifdef GL_OES_standard_derivatives
 #extension GL_OES_standard_derivatives : enable
@@ -268,18 +288,21 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
 }
 `;
 
-Cesium.Material._materialCache.addMaterial(Cesium.Material.PolylineDashArrowType, {
+Cesium.Material._materialCache.addMaterial(
+  Cesium.Material.PolylineDashArrowType,
+  {
     fabric: {
-        type: Cesium.Material.PolylineDashArrowType,
-        uniforms: {
-            color: new Cesium.Color(1.0, 0.0, 0.0, 1.0),
-            gapColor: new Cesium.Color(0.0, 0.0, 0.0, 0.0),
-            dashLength: 16.0,
-            dashPattern: 1.0
-        },
-        source: Cesium.Material.PolylineDashArrowSource
+      type: Cesium.Material.PolylineDashArrowType,
+      uniforms: {
+        color: new Cesium.Color(1.0, 0.0, 0.0, 1.0),
+        gapColor: new Cesium.Color(0.0, 0.0, 0.0, 0.0),
+        dashLength: 16.0,
+        dashPattern: 1.0,
+      },
+      source: Cesium.Material.PolylineDashArrowSource,
     },
     translucent: function () {
-        // 可根据需要设置透明度属性
-    }
-});
+      // 可根据需要设置透明度属性
+    },
+  }
+);

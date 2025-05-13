@@ -1,22 +1,21 @@
-const Cesium = window.Cesium
+const Cesium = window.Cesium;
 import * as plottingUtils from "../common/plottingUtils";
 
 class Animation {
+  viewer = null;
 
-  viewer = null
-
-  supper = null
+  supper = null;
 
   // 闪烁实体id数组
-  flickerEntity = {}
+  flickerEntity = {};
   // 旋转实体id数组
-  rotateEntity = {}
+  rotateEntity = {};
   // 缩放实体id数组
-  scaleEntity = {}
+  scaleEntity = {};
 
   constructor(viewer, supper) {
-    this.viewer = viewer
-    this.supper = supper
+    this.viewer = viewer;
+    this.supper = supper;
     this.viewer.animations = new Map([
       ["flicker", new Map()],
       ["rotate", new Map()],
@@ -24,11 +23,15 @@ class Animation {
       ["autoRotate", new Map()],
       ["targetLine", new Map()],
       ["trackLine", new Map()],
-      ["growthLine", new Map()]
+      ["growthLine", new Map()],
       /** 其他动画在这里进行初始化 */
-    ])
+    ]);
 
-    supper.player.addEventListener("change", "updateTime", this.updateTime.bind(this))
+    supper.player.addEventListener(
+      "change",
+      "updateTime",
+      this.updateTime.bind(this)
+    );
   }
 
   /**
@@ -60,72 +63,104 @@ class Animation {
    */
   /** 系统时间改变 执行相关逻辑*/
   updateTime(currentTime) {
-    currentTime = Cesium.JulianDate.fromIso8601(currentTime)
+    currentTime = Cesium.JulianDate.fromIso8601(currentTime);
     for (const [, item] of Array.from(this.viewer.animations.get("flicker"))) {
-      const flickerT = item.animation.flicker
-      if (!item || !flickerT) continue
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
+      const flickerT = item.animation.flicker;
+      if (!item || !flickerT) continue;
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
         if (!this.flickerEntity[item.id]) {
           this.flickerEntity[item.id] = true;
-          this.flickerAnimation(item, flickerT * 1000)
+          this.flickerAnimation(item, flickerT * 1000);
         }
       } else {
         delete this.flickerEntity[item.id];
       }
     }
     for (const [, item] of Array.from(this.viewer.animations.get("rotate"))) {
-      const rotateT = item.animation.rotate
-      if (!item || !rotateT) continue
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
+      const rotateT = item.animation.rotate;
+      if (!item || !rotateT) continue;
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
         if (!this.rotateEntity[item.id]) {
           this.rotateEntity[item.id] = true;
-          this.rotateAnimation(item, rotateT * 1000)
+          this.rotateAnimation(item, rotateT * 1000);
         }
       } else {
         delete this.rotateEntity[item.id];
       }
     }
     for (const [, item] of Array.from(this.viewer.animations.get("scale"))) {
-      const scaleT = item.animation.scale
-      if (!item || !scaleT) continue
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
+      const scaleT = item.animation.scale;
+      if (!item || !scaleT) continue;
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
         if (!this.scaleEntity[item.id]) {
           this.scaleEntity[item.id] = true;
-          this.scaleAnimation(item, scaleT * 1000)
+          this.scaleAnimation(item, scaleT * 1000);
         }
       } else {
         delete this.scaleEntity[item.id];
       }
     }
-    for (const [, item] of Array.from(this.viewer.animations.get("autoRotate"))) {
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
-        this.autoRotateAnimation(item)
+    for (const [, item] of Array.from(
+      this.viewer.animations.get("autoRotate")
+    )) {
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
+        this.autoRotateAnimation(item);
       }
     }
-    for (const [, item] of Array.from(this.viewer.animations.get("targetLine"))) {
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
-        this.targetLineAnimation(item)
+    for (const [, item] of Array.from(
+      this.viewer.animations.get("targetLine")
+    )) {
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
+        this.targetLineAnimation(item);
       } else {
-        if (!item.targetLine) return
-        this.viewer.entities.removeById(item.targetLine.id)
-        delete item.targetLine
+        if (!item.targetLine) return;
+        this.viewer.entities.removeById(item.targetLine.id);
+        delete item.targetLine;
       }
     }
-    for (const [, item] of Array.from(this.viewer.animations.get("trackLine"))) {
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
-        this.trackLineAnimation(item)
+    for (const [, item] of Array.from(
+      this.viewer.animations.get("trackLine")
+    )) {
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
+        this.trackLineAnimation(item);
       } else {
-        if (!item.trackLine) return
-        this.viewer.entities.removeById(item.trackLine.id)
-        delete item.trackLine
+        if (!item.trackLine) return;
+        this.viewer.entities.removeById(item.trackLine.id);
+        delete item.trackLine;
       }
     }
-    for (const [, item] of Array.from(this.viewer.animations.get("growthLine"))) {
-      if (item.availability && Cesium.TimeInterval.contains(item.availability, currentTime)) {
-        this.setGrowthLineDuration(item)
+    for (const [, item] of Array.from(
+      this.viewer.animations.get("growthLine")
+    )) {
+      if (
+        item.availability &&
+        Cesium.TimeInterval.contains(item.availability, currentTime)
+      ) {
+        this.setGrowthLineDuration(item);
       } else {
-        if (!(item.polyline.positions instanceof Cesium.CallbackProperty)) return;
-        item.polyline.positions = item.polyline.positions.getValue(Cesium.JulianDate.now()); //将动态值改为静态
+        if (!(item.polyline.positions instanceof Cesium.CallbackProperty))
+          return;
+        item.polyline.positions = item.polyline.positions.getValue(
+          Cesium.JulianDate.now()
+        ); //将动态值改为静态
       }
     }
   }
@@ -156,15 +191,15 @@ class Animation {
    * @param {*} flickerTime  实体闪烁持续时间 1000毫秒
    */
   flickerAnimation(entity, flickerTime) {
-    const show = entity.show
+    const show = entity.show;
     entity["animation_flicker"] = setInterval(() => {
-      entity.show = !entity.show
-    }, 200)
+      entity.show = !entity.show;
+    }, 200);
     setTimeout(() => {
-      clearInterval(entity["animation_flicker"])
-      delete entity["animation_flicker"]
-      entity.show = show
-    }, Math.abs(flickerTime))
+      clearInterval(entity["animation_flicker"]);
+      delete entity["animation_flicker"];
+      entity.show = show;
+    }, Math.abs(flickerTime));
   }
 
   /**
@@ -196,19 +231,21 @@ class Animation {
    * @param {*} rotateTime  实体旋转持续时间 1000毫秒
    */
   rotateAnimation(entity, rotateTime) {
-    const allow = ["image"]
-    if (allow.indexOf(entity.type) === -1) return
-    let angle = 0
+    const allow = ["image"];
+    if (allow.indexOf(entity.type) === -1) return;
+    let angle = 0;
     entity["animation_rotate"] = setInterval(() => {
       // 旋转逻辑
-      angle += 360 * 10 / 500
-      if (entity.billboard) entity.billboard.rotation = Cesium.Math.toRadians(angle)
-    }, 10)
+      angle += (360 * 10) / 500;
+      if (entity.billboard)
+        entity.billboard.rotation = Cesium.Math.toRadians(angle);
+    }, 10);
     setTimeout(() => {
-      clearInterval(entity["animation_rotate"])
-      delete entity["animation_rotate"]
-      if (entity.billboard) entity.billboard.rotation = Cesium.Math.toRadians(0)
-    }, rotateTime)
+      clearInterval(entity["animation_rotate"]);
+      delete entity["animation_rotate"];
+      if (entity.billboard)
+        entity.billboard.rotation = Cesium.Math.toRadians(0);
+    }, rotateTime);
   }
 
   /**
@@ -239,20 +276,20 @@ class Animation {
    * @param {*} scaleTime  实体缩放持续时间 1000毫秒
    */
   scaleAnimation(entity, scaleTime) {
-    const allow = ["image"]
-    if (allow.indexOf(entity.type) === -1) return
-    let count = 0
+    const allow = ["image"];
+    if (allow.indexOf(entity.type) === -1) return;
+    let count = 0;
     entity["animation_scale"] = setInterval(() => {
       // 旋转逻辑
-      const scale = 1 + Math.abs(Math.sin(count * Math.PI / (500 / 10)));
+      const scale = 1 + Math.abs(Math.sin((count * Math.PI) / (500 / 10)));
       count++;
-      if (entity.billboard) entity.billboard.scale = scale
-    }, 10)
+      if (entity.billboard) entity.billboard.scale = scale;
+    }, 10);
     setTimeout(() => {
-      clearInterval(entity["animation_scale"])
-      delete entity["animation_scale"]
-      if (entity.billboard) entity.billboard.scale = 1
-    }, scaleTime)
+      clearInterval(entity["animation_scale"]);
+      delete entity["animation_scale"];
+      if (entity.billboard) entity.billboard.scale = 1;
+    }, scaleTime);
   }
 
   /**
@@ -283,14 +320,18 @@ class Animation {
    * */
 
   autoRotateAnimation(entity) {
-    const currentTime = this.viewer.clock.currentTime
+    const currentTime = this.viewer.clock.currentTime;
     const currentPos = entity.position.getValue(currentTime);
-    const nextPos = entity.position.getValue(Cesium.JulianDate.addSeconds(currentTime, 1, new Cesium.JulianDate()));
-    if (!currentPos || !nextPos) return
+    const nextPos = entity.position.getValue(
+      Cesium.JulianDate.addSeconds(currentTime, 1, new Cesium.JulianDate())
+    );
+    if (!currentPos || !nextPos) return;
     const fromCartographic = Cesium.Cartographic.fromCartesian(currentPos);
     const toCartographic = Cesium.Cartographic.fromCartesian(nextPos);
-    const longitudeDifference = toCartographic.longitude - fromCartographic.longitude;
-    const latitudeDifference = toCartographic.latitude - fromCartographic.latitude;
+    const longitudeDifference =
+      toCartographic.longitude - fromCartographic.longitude;
+    const latitudeDifference =
+      toCartographic.latitude - fromCartographic.latitude;
     const angleInRadians = Math.atan2(longitudeDifference, latitudeDifference);
     const heading = (angleInRadians + 2 * Math.PI) % (2 * Math.PI);
     if ("billboard" in entity) entity.billboard.rotation = -heading;
@@ -327,7 +368,9 @@ class Animation {
    */
   setGrowthLineDuration(entity) {
     const growthDuration = entity.animation.growthLine; // 动画时长
-    const cartesianPositions = entity.polyline.positions.getValue(Cesium.JulianDate.now()); // 获取完整的点集
+    const cartesianPositions = entity.polyline.positions.getValue(
+      Cesium.JulianDate.now()
+    ); // 获取完整的点集
     // 检查 availability 和 startTime 是否有效
     const startTime = entity.availability ? entity.availability.start : null;
     if (!startTime) return;
@@ -335,11 +378,20 @@ class Animation {
     entity.polyline.positions = new Cesium.CallbackProperty((time) => {
       if (!time) return cartesianPositions; // 返回完整的点集，避免空值导致的渲染错误
       // 计算从开始时间起经过的秒数
-      const elapsedSeconds = Cesium.JulianDate.secondsDifference(time, startTime);
+      const elapsedSeconds = Cesium.JulianDate.secondsDifference(
+        time,
+        startTime
+      );
       // 动画进度（确保在 [0, 1] 范围内）
-      const progress = Math.min(1, Math.max(0, elapsedSeconds / growthDuration));
+      const progress = Math.min(
+        1,
+        Math.max(0, elapsedSeconds / growthDuration)
+      );
       // 根据进度截取当前可见点
-      const currentPositions = cartesianPositions.slice(0, Math.ceil(progress * cartesianPositions.length));
+      const currentPositions = cartesianPositions.slice(
+        0,
+        Math.ceil(progress * cartesianPositions.length)
+      );
       return currentPositions;
     }, false);
   }
@@ -376,34 +428,44 @@ class Animation {
    * 目标线连接
    * */
   targetLineAnimation(entity) {
-    const currentPoint = entity.position.getValue(this.viewer.clock.currentTime)
-    const targetLine = entity.material.targetLine
+    const currentPoint = entity.position.getValue(
+      this.viewer.clock.currentTime
+    );
+    const targetLine = entity.material.targetLine;
     if (entity.targetLine) {
-      entity.targetLine.connect[0] = currentPoint
+      entity.targetLine.connect[0] = currentPoint;
       // 如果目标为实体 则修改目标点位置
       if (entity.animation.targetLine.type === "entity") {
-        entity.targetLine.connect[1] = this.viewer.entities.getById(entity.animation.targetLine.value)?.position?.getValue(this.viewer.clock.currentTime)
+        entity.targetLine.connect[1] = this.viewer.entities
+          .getById(entity.animation.targetLine.value)
+          ?.position?.getValue(this.viewer.clock.currentTime);
       }
     } else {
       // 根据目标类型获取目标点
-      const targetPoint = entity.animation.targetLine.type === "point" ?
-        plottingUtils.latitudeAndLongitudeToDegrees(entity.animation.targetLine.value, false) :
-        this.viewer.entities.getById(entity.animation.targetLine.value)?.position?.getValue(this.viewer.clock.currentTime)
-      const connectPoints = [currentPoint, targetPoint]
+      const targetPoint =
+        entity.animation.targetLine.type === "point"
+          ? plottingUtils.latitudeAndLongitudeToDegrees(
+              entity.animation.targetLine.value,
+              false
+            )
+          : this.viewer.entities
+              .getById(entity.animation.targetLine.value)
+              ?.position?.getValue(this.viewer.clock.currentTime);
+      const connectPoints = [currentPoint, targetPoint];
       // 定义目标线对象
       entity.targetLine = this.viewer.entities.add({
         connect: connectPoints,
         polyline: {
           positions: new Cesium.CallbackProperty(function () {
-            return connectPoints
+            return connectPoints;
           }, false),
           width: targetLine.width,
           // 设置轨迹线的弧度类型为直线
           arcType: Cesium.ArcType.NONE,
           material: new Cesium.PolylineArrowMaterialProperty(
             Cesium.Color.fromCssColorString(targetLine.color)
-          )
-        }
+          ),
+        },
       });
     }
   }
@@ -439,9 +501,9 @@ class Animation {
    * 航迹线
    * */
   trackLineAnimation(entity) {
-    const trackLine = entity.material.trackLine
+    const trackLine = entity.material.trackLine;
     if (entity.trackLine) {
-      return null
+      return null;
     } else {
       // 创建采样位置属性对象，用于存储实体位置信息随时间变化的采样数据
       let pathPosition = new Cesium.SampledPositionProperty();
@@ -466,7 +528,13 @@ class Animation {
             // 将有效的采样点添加到路径位置数组中
             for (let i = 0; i < times.length; i++) {
               if (Cesium.JulianDate.compare(times[i], time) <= 0) {
-                pathPositions.push(new Cesium.Cartesian3(samples[i * 3], samples[i * 3 + 1], samples[i * 3 + 2]));
+                pathPositions.push(
+                  new Cesium.Cartesian3(
+                    samples[i * 3],
+                    samples[i * 3 + 1],
+                    samples[i * 3 + 2]
+                  )
+                );
               }
             }
             return pathPositions;
@@ -475,8 +543,8 @@ class Animation {
           // 设置轨迹线的弧度类型为直线
           arcType: Cesium.ArcType.NONE,
           material: this._createLineStyle(trackLine.style, trackLine.color),
-        }
-      })
+        },
+      });
     }
   }
 
@@ -521,23 +589,23 @@ class Animation {
    * */
   _createLineStyle(type, color) {
     if (type === "solid") {
-      return Cesium.Color.fromCssColorString(color)
+      return Cesium.Color.fromCssColorString(color);
     } else if (type === "dashed") {
       return new Cesium.PolylineDashMaterialProperty({
         color: Cesium.Color.fromCssColorString(color), // 设置虚线的颜色
         // gapColor:Cesium.Color.YELLOW,   //间隙颜色
         dashLength: 30.0, // 设置虚线段的长度
         dashPattern: 255.0, // 设置虚线的模式，这里使用一个8位二进制数来表示虚线和间隙
-      })
+      });
     } else if (type === "glow") {
       return new Cesium.PolylineGlowMaterialProperty({
         glowPower: 0.1,
         color: Cesium.Color.fromCssColorString(color),
-      })
+      });
     } else {
-      return null
+      return null;
     }
   }
 }
 
-export default Animation
+export default Animation;

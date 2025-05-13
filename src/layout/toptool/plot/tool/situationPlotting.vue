@@ -2,30 +2,37 @@
   <!-- 态势组件 -->
   <div class="situation-plotting-contain">
     <el-collapse accordion v-model="activeName">
-      <el-collapse-item v-for="(item, index) in situationMenu" :key="index" :title="item.name" :name="index">
+      <el-collapse-item
+        v-for="(item, index) in situationMenu"
+        :key="index"
+        :title="item.name"
+        :name="index"
+      >
         <div class="icon-plot-situation-item">
           <div v-for="(i_item, i_index) in item.value" :key="i_index">
-            <img draggable="false" @click="draw(i_item.type)" :src="i_item.image">
+            <img
+              draggable="false"
+              @click="draw(i_item.type)"
+              :src="i_item.image"
+            />
             <span>{{ i_item.name }}</span>
           </div>
         </div>
         <el-switch
-            style="margin-left: 362px;margin-top:20px;display: block"
-            v-model="isSolid"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-text="虚线"
-            inactive-text="实线">
+          style="margin-left: 362px; margin-top: 20px; display: block"
+          v-model="isSolid"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          active-text="虚线"
+          inactive-text="实线"
+        >
         </el-switch>
       </el-collapse-item>
     </el-collapse>
   </div>
-
 </template>
 
 <script>
-
-
 import store from "@/store";
 
 export default {
@@ -39,7 +46,7 @@ export default {
 
       /* 作战标绘工具 */
       militaryPlotting: null,
-    }
+    };
   },
   methods: {
     /** 获取标绘图标 */
@@ -62,13 +69,13 @@ export default {
               name: "曲面",
               image: require("../../../../assets/images/situationPlotImgs/曲面多边形.png"),
               type: "CurvedPolygon",
-            }
-            ,
+            },
             {
               name: "多边形",
               image: require("../../../../assets/images/situationPlotImgs/多边形.png"),
               type: "Polygon",
-            }, {
+            },
+            {
               name: "简单直线箭头",
               image: require("../../../../assets/images/situationPlotImgs/直线箭头.png"),
               type: "StraightLineArrow",
@@ -112,19 +119,20 @@ export default {
               name: "防御阵形",
               image: require("../../../../assets/images/situationPlotImgs/防御.png"),
               type: "DefenseLine",
-            }, {
+            },
+            {
               name: "旗帜",
               image: require("../../../../assets/images/situationPlotImgs/旗帜.png"),
               type: "Flag",
-            }, {
+            },
+            {
               name: "文本框",
               image: require("../../../../assets/images/situationPlotImgs/文本框.png"),
               type: "TextBox",
-            }
-
-          ]
-        }
-      ]
+            },
+          ],
+        },
+      ];
     },
     /** 作战标绘 */
     draw(type) {
@@ -167,35 +175,38 @@ export default {
           this.createFlag();
           break;
         case "DefenseLine":
-          this.createDefenseLine()
+          this.createDefenseLine();
           break;
         case "CurvedPolygon":
-          this.createCurvedPolygon()
-          break
+          this.createCurvedPolygon();
+          break;
         case "TextBox":
-          this.createTextBox()
-          break
-          // case "PerfectCircle":
-          //   this.createPerfectCircle()
-          //   break
+          this.createTextBox();
+          break;
+        // case "PerfectCircle":
+        //   this.createPerfectCircle()
+        //   break
       }
     },
     drawActivate(plotType) {
-      this.$cesiumHelper.xt3d.getPlotType(plotType)
+      this.$cesiumHelper.xt3d.getPlotType(plotType);
     },
     /** 创建旗帜 */
     createFlag() {
       const options = {
         borderColor: "rgba(255,0,0,8)",
         textColor: "rgba(255,255,0,1)",
-        backgroundColor: "rgba(255,0,0,0.3)"
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateFlag(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        backgroundColor: "rgba(255,0,0,0.3)",
+      };
+      this.$cesiumHelper.plotting.situationPlotting.CreateFlag(options).then(
+        (entity) => {
+          const info = this.$cesiumHelper.getEntityInfo(entity);
+          store.dispatch("addEntitySource", info);
+        },
+        (err) => {
+          this.$message.info(err);
+        }
+      );
     },
 
     /** 创建多边形 */
@@ -203,46 +214,54 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
-          }
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting.CreatePolygon(options).then(
+        (entity) => {
+          const info = this.$cesiumHelper.getEntityInfo(entity);
+          store.dispatch("addEntitySource", info);
+        },
+        (err) => {
+          this.$message.info(err);
         }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreatePolygon(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+      );
     },
     /**创建曲面多边形*/
     createCurvedPolygon() {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateCurvedPolygon(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateCurvedPolygon(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建圆滑曲线 */
@@ -250,20 +269,23 @@ export default {
       const options = {
         material: {
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
-          }
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting.CreateCurve(options).then(
+        (entity) => {
+          const info = this.$cesiumHelper.getEntityInfo(entity);
+          store.dispatch("addEntitySource", info);
+        },
+        (err) => {
+          this.$message.info(err);
         }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateCurve(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+      );
     },
 
     /** 创建折线 */
@@ -271,20 +293,25 @@ export default {
       const options = {
         material: {
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreatePolyline(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreatePolyline(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建集结地 */
@@ -292,23 +319,28 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateAssemble(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateAssemble(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建进攻箭头 */
@@ -316,23 +348,28 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateAttackArrow(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateAttackArrow(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建钳击箭头 */
@@ -340,23 +377,28 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreatePincerArrow(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreatePincerArrow(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建圆角矩形 */
@@ -364,23 +406,28 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateRoundRectangle(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateRoundRectangle(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建直角箭头 */
@@ -388,23 +435,28 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateRightAngleArrow(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateRightAngleArrow(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建燕尾箭头 */
@@ -412,23 +464,28 @@ export default {
       const options = {
         material: {
           fill: {
-            color: "rgba(255, 0, 0, 0.3)"
+            color: "rgba(255, 0, 0, 0.3)",
           },
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateSwallowtailArrow(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateSwallowtailArrow(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建简单箭头-直线 */
@@ -436,20 +493,25 @@ export default {
       const options = {
         material: {
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateLineArrow(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateLineArrow(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建简单箭头-曲线 */
@@ -457,21 +519,26 @@ export default {
       const options = {
         material: {
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            width:this.isSolid? 3:2,
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            width: this.isSolid ? 3 : 2,
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateCurveArrow(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateCurveArrow(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建防御 */
@@ -479,40 +546,47 @@ export default {
       const options = {
         material: {
           border: {
-            color: "rgba(255,0,0,0.8)"
+            color: "rgba(255,0,0,0.8)",
           },
-          line:{
-            style: this.isSolid? "dashed": "solid",
-            width:this.isSolid? 3:2,
-            color: this.isSolid? "rgba(255, 255,0,1)": "rgba(255,0,0,0.8)"
+          line: {
+            style: this.isSolid ? "dashed" : "solid",
+            width: this.isSolid ? 3 : 2,
+            color: this.isSolid ? "rgba(255, 255,0,1)" : "rgba(255,0,0,0.8)",
+          },
+        },
+      };
+      this.$cesiumHelper.plotting.situationPlotting
+        .CreateDefenseLine(options)
+        .then(
+          (entity) => {
+            const info = this.$cesiumHelper.getEntityInfo(entity);
+            store.dispatch("addEntitySource", info);
+          },
+          (err) => {
+            this.$message.info(err);
           }
-        }
-      }
-      this.$cesiumHelper.plotting.situationPlotting.CreateDefenseLine(options).then(entity => {
-        const info = this.$cesiumHelper.getEntityInfo(entity)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
+        );
     },
 
     /** 创建文本框 */
     createTextBox() {
-      this.$cesiumHelper.plotting.situationPlotting.CreateTextBox({}).then(res => {
-        const info = this.$cesiumHelper.getEntityInfo(res)
-        store.dispatch("addEntitySource", info)
-      }, err => {
-        this.$message.info(err)
-      })
-    }
-
+      this.$cesiumHelper.plotting.situationPlotting.CreateTextBox({}).then(
+        (res) => {
+          const info = this.$cesiumHelper.getEntityInfo(res);
+          store.dispatch("addEntitySource", info);
+        },
+        (err) => {
+          this.$message.info(err);
+        }
+      );
+    },
   },
   mounted() {
     this.$nextTick(() => {
-      this.getIconList()
-    })
-  }
-}
+      this.getIconList();
+    });
+  },
+};
 </script>
 
 <style scoped>
@@ -536,7 +610,7 @@ export default {
 }
 
 .icon-plot-situation-item > div:hover {
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
 }
 
 .icon-plot-situation-item > div > img {

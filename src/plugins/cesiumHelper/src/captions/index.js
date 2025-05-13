@@ -1,7 +1,6 @@
-import * as uuid from "../common/uuid"
+import * as uuid from "../common/uuid";
 import * as DateUtils from "../common/dateUtils";
-import {julianDateToIso8602Times} from "../common/dateUtils";
-
+import { julianDateToIso8602Times } from "../common/dateUtils";
 
 /**
  * 字幕工具类
@@ -11,50 +10,65 @@ import {julianDateToIso8602Times} from "../common/dateUtils";
  * @date：2023/08/22
  * */
 class Captions {
-
   /** 字母字典 */
-  captionsMap = null
+  captionsMap = null;
 
   /** 文字展示栏 Dom */
-  textContainer = null
+  textContainer = null;
 
   /** 音频集合 */
-  audioGroupContainer = null
+  audioGroupContainer = null;
 
   /** 视图 */
-  viewer = null
+  viewer = null;
 
   /** 当前字幕展示 */
-  activateElements = null
+  activateElements = null;
 
   /** 系统播放状态 */
-  isPlay = false
+  isPlay = false;
 
   /** 父类 */
-  supper = null
+  supper = null;
 
   /** 上一帧时间 */
-  lastFrameTime = null
+  lastFrameTime = null;
 
   /** 构造方法 */
   constructor(viewer, cesiumContainer, supper) {
     /** 初始化变量 */
-    this.viewer = viewer
+    this.viewer = viewer;
 
-    this.captionsMap = new Map()
-    this.activateElements = new Map()
+    this.captionsMap = new Map();
+    this.activateElements = new Map();
 
-    this.supper = supper
+    this.supper = supper;
 
     /** 创建 并将文字标签加入到容器中 */
-    this._createCaptionsDiv(cesiumContainer)
+    this._createCaptionsDiv(cesiumContainer);
     /** 创建 音频集合 */
-    this._createAudioGroupContainer(cesiumContainer)
+    this._createAudioGroupContainer(cesiumContainer);
     /** 设置 系统时间回调 */
-    supper.player.addEventListener("play", "playCaption", this.playCaption.bind(this))
-    supper.player.addEventListener("pause", "pauseCaption", this.pauseCaption.bind(this))
-    supper.player.addEventListener("change", "updateCaptions", this.updateCaptions.bind(this))
-    supper.player.addEventListener("speed_change", "speed_change_caption_callback", this._speedChangeCallback.bind(this))
+    supper.player.addEventListener(
+      "play",
+      "playCaption",
+      this.playCaption.bind(this)
+    );
+    supper.player.addEventListener(
+      "pause",
+      "pauseCaption",
+      this.pauseCaption.bind(this)
+    );
+    supper.player.addEventListener(
+      "change",
+      "updateCaptions",
+      this.updateCaptions.bind(this)
+    );
+    supper.player.addEventListener(
+      "speed_change",
+      "speed_change_caption_callback",
+      this._speedChangeCallback.bind(this)
+    );
   }
 
   /**
@@ -93,28 +107,35 @@ class Captions {
   /** 添加字幕 */
   addCaptions(options) {
     return new Promise((resolve, reject) => {
-      const entity = JSON.parse(JSON.stringify(options))
-      entity.id = options.id || uuid.uuid()
-      entity.type = "captions"
-      entity.groupId = this.viewer.root.id
-      entity.name = options.label
-      entity.data = options.data
-      entity.sort = options.sort || 1
-      entity.label = options.label
-      entity.availability = options.availability || julianDateToIso8602Times(this.viewer.clock.currentTime)
+      const entity = JSON.parse(JSON.stringify(options));
+      entity.id = options.id || uuid.uuid();
+      entity.type = "captions";
+      entity.groupId = this.viewer.root.id;
+      entity.name = options.label;
+      entity.data = options.data;
+      entity.sort = options.sort || 1;
+      entity.label = options.label;
+      entity.availability =
+        options.availability ||
+        julianDateToIso8602Times(this.viewer.clock.currentTime);
       this._createAudioContainer(options.references)
-        .then(audio => {
-          entity.audio = audio
-          entity.references = options.references
-          this.captionsMap.set(entity.id, entity)
-          this.viewer.resource.set(entity.id, this.getCaptionToJson(entity))
-          const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime)
-          this.updateCaptions(time, false)
-          resolve(entity)
-        }).catch(audio => {
-        reject("【音频加载错误】：url->" + audio + ", entity->" + entity.name)
-      })
-    })
+        .then((audio) => {
+          entity.audio = audio;
+          entity.references = options.references;
+          this.captionsMap.set(entity.id, entity);
+          this.viewer.resource.set(entity.id, this.getCaptionToJson(entity));
+          const time = DateUtils.julianDateToIso8601(
+            this.viewer.clock.currentTime
+          );
+          this.updateCaptions(time, false);
+          resolve(entity);
+        })
+        .catch((audio) => {
+          reject(
+            "【音频加载错误】：url->" + audio + ", entity->" + entity.name
+          );
+        });
+    });
   }
 
   /**
@@ -155,27 +176,32 @@ class Captions {
   /** 加载字幕 */
   async loadCaptions(options) {
     return new Promise((resolve, reject) => {
-      const entity = JSON.parse(JSON.stringify(options))
-      entity.id = options.id
-      entity.type = "captions"
-      entity.groupId = options.groupId
-      entity.data = options.data
-      entity.sort = options.sort
-      entity.name = options.name
-      entity.label = options.label
-      entity.references = options.references
+      const entity = JSON.parse(JSON.stringify(options));
+      entity.id = options.id;
+      entity.type = "captions";
+      entity.groupId = options.groupId;
+      entity.data = options.data;
+      entity.sort = options.sort;
+      entity.name = options.name;
+      entity.label = options.label;
+      entity.references = options.references;
       this._createAudioContainer(options.references)
-        .then(audio => {
-          entity.audio = audio
-          this.captionsMap.set(entity.id, entity)
-          this.viewer.resource.set(entity.id, this.getCaptionToJson(entity))
-          const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime)
-          this.updateCaptions(time)
-          resolve(entity)
-        }).catch(audio => {
-        reject("【音频加载错误】：url->" + audio + ", entity->" + entity.name)
-      })
-    })
+        .then((audio) => {
+          entity.audio = audio;
+          this.captionsMap.set(entity.id, entity);
+          this.viewer.resource.set(entity.id, this.getCaptionToJson(entity));
+          const time = DateUtils.julianDateToIso8601(
+            this.viewer.clock.currentTime
+          );
+          this.updateCaptions(time);
+          resolve(entity);
+        })
+        .catch((audio) => {
+          reject(
+            "【音频加载错误】：url->" + audio + ", entity->" + entity.name
+          );
+        });
+    });
   }
 
   /**
@@ -210,20 +236,20 @@ class Captions {
 
   /** 编辑字幕 */
   editCaptions(id, options) {
-    const entity = this.captionsMap.get(id)
-    "name" in options && (entity.name = options.name)
-    "label" in options && (entity.label = options.label)
-    "data" in options && (entity.data = options.data)
-    "sort" in options && (entity.sort = options.sort)
-    "groupId" in options && (entity.groupId = options.groupId)
-    "availability" in options && (entity.availability = options.availability)
+    const entity = this.captionsMap.get(id);
+    "name" in options && (entity.name = options.name);
+    "label" in options && (entity.label = options.label);
+    "data" in options && (entity.data = options.data);
+    "sort" in options && (entity.sort = options.sort);
+    "groupId" in options && (entity.groupId = options.groupId);
+    "availability" in options && (entity.availability = options.availability);
     if ("references" in options) {
-      entity.references = options.references
-      entity.audio.src = options.references
+      entity.references = options.references;
+      entity.audio.src = options.references;
     }
-    const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime)
-    this.viewer.resource.set(id, this.getCaptionToJson(entity))
-    this.updateCaptions(time)
+    const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime);
+    this.viewer.resource.set(id, this.getCaptionToJson(entity));
+    this.updateCaptions(time);
   }
 
   /**
@@ -246,12 +272,12 @@ class Captions {
 
   /** 移除字幕 */
   removeById(id) {
-    const entity = this.captionsMap.get(id)
-    entity.audio?.remove()
-    this.captionsMap.delete(id)
-    this.viewer.resource.delete(id)
-    const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime)
-    this.updateCaptions(time)
+    const entity = this.captionsMap.get(id);
+    entity.audio?.remove();
+    this.captionsMap.delete(id);
+    this.viewer.resource.delete(id);
+    const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime);
+    this.updateCaptions(time);
   }
 
   /**
@@ -274,14 +300,14 @@ class Captions {
 
   /** 移除所有字幕 */
   removeAll() {
-    for (const [key,] of this.captionsMap) {
-      const entity = this.captionsMap.get(key)
-      entity.audio?.remove()
-      this.viewer.resource.delete(key)
+    for (const [key] of this.captionsMap) {
+      const entity = this.captionsMap.get(key);
+      entity.audio?.remove();
+      this.viewer.resource.delete(key);
     }
-    this.captionsMap.clear()
-    const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime)
-    this.updateCaptions(time)
+    this.captionsMap.clear();
+    const time = DateUtils.julianDateToIso8601(this.viewer.clock.currentTime);
+    this.updateCaptions(time);
   }
 
   /**
@@ -300,7 +326,7 @@ class Captions {
 
   /** 根据 id 获取字幕 */
   getCaptionById(id) {
-    return this.captionsMap.get(id)
+    return this.captionsMap.get(id);
   }
 
   /**
@@ -319,8 +345,14 @@ class Captions {
 
   /** 获取 字幕 Json */
   getCaptionToJson(entity) {
-    const startTime = entity.availability.split("/")[0].replace("T", " ").replace("Z", "")
-    const endTime = entity.availability.split("/")[1].replace("T", " ").replace("Z", "")
+    const startTime = entity.availability
+      .split("/")[0]
+      .replace("T", " ")
+      .replace("Z", "");
+    const endTime = entity.availability
+      .split("/")[1]
+      .replace("T", " ")
+      .replace("Z", "");
     return {
       id: entity.id,
       name: entity.name,
@@ -332,8 +364,8 @@ class Captions {
       startTime: startTime,
       endTime: endTime,
       show: entity.show,
-      references: entity.references
-    }
+      references: entity.references,
+    };
   }
 
   /**
@@ -350,11 +382,11 @@ class Captions {
 
   /** 获取 字幕 列表 */
   getCaptionToList() {
-    const result = []
+    const result = [];
     for (let [, value] of this.captionsMap) {
-      result.push(this.getCaptionToJson(value))
+      result.push(this.getCaptionToJson(value));
     }
-    return result
+    return result;
   }
 
   /**
@@ -375,30 +407,35 @@ class Captions {
 
   /** 更新字幕内容 */
   updateCaptions(currentTime) {
-    currentTime = new Date(currentTime.replace("T", " ").replace("Z", ""))
+    currentTime = new Date(currentTime.replace("T", " ").replace("Z", ""));
     for (const [key, value] of this.captionsMap) {
-      const times = value.availability.split("/")
-      const startTime = new Date(times[0].replace("T", " ").replace("Z", ""))
-      const endTime = new Date(times[1].replace("T", " ").replace("Z", ""))
-      const frameTran = currentTime && this.lastFrameTime && currentTime?.getTime() !== this.lastFrameTime?.getTime()
-      if (currentTime >= startTime && currentTime < endTime && frameTran){
+      const times = value.availability.split("/");
+      const startTime = new Date(times[0].replace("T", " ").replace("Z", ""));
+      const endTime = new Date(times[1].replace("T", " ").replace("Z", ""));
+      const frameTran =
+        currentTime &&
+        this.lastFrameTime &&
+        currentTime?.getTime() !== this.lastFrameTime?.getTime();
+      if (currentTime >= startTime && currentTime < endTime && frameTran) {
         if (this.activateElements.get(key)) continue;
-        this.textContainer.innerHTML = value.label
-        this.activateElements.set(key, true)
-        value.audio.currentTime = Math.abs(currentTime.getTime() - startTime.getTime()) / 1000
-        this.isPlay && value.audio.play()
-        if (this.activateElements.size > 0) this.textContainer.style.display = "block"
+        this.textContainer.innerHTML = value.label;
+        this.activateElements.set(key, true);
+        value.audio.currentTime =
+          Math.abs(currentTime.getTime() - startTime.getTime()) / 1000;
+        this.isPlay && value.audio.play();
+        if (this.activateElements.size > 0)
+          this.textContainer.style.display = "block";
       } else {
-        this.activateElements.delete(key)
-        value.audio.pause()
+        this.activateElements.delete(key);
+        value.audio.pause();
       }
     }
     /* 如果没有符合的字幕  就把字幕隐藏 */
     if (this.captionsMap.size === 0 || this.activateElements.size === 0) {
-      this.show = {}
-      this.textContainer.style.display = "none"
+      this.show = {};
+      this.textContainer.style.display = "none";
     }
-    this.lastFrameTime = currentTime
+    this.lastFrameTime = currentTime;
   }
 
   /**
@@ -416,10 +453,10 @@ class Captions {
 
   /** 播放字幕 */
   playCaption() {
-    this.isPlay = true
-    for (const [key,] of this.activateElements) {
-      const caption = this.captionsMap.get(key)
-      caption?.audio?.paused && caption.audio?.play()
+    this.isPlay = true;
+    for (const [key] of this.activateElements) {
+      const caption = this.captionsMap.get(key);
+      caption?.audio?.paused && caption.audio?.play();
     }
   }
 
@@ -438,9 +475,9 @@ class Captions {
 
   /** 暂停字幕 */
   pauseCaption() {
-    this.isPlay = false
-    for (const [key,] of this.activateElements) {
-      this.captionsMap.get(key)?.audio?.pause()
+    this.isPlay = false;
+    for (const [key] of this.activateElements) {
+      this.captionsMap.get(key)?.audio?.pause();
     }
   }
 
@@ -461,8 +498,8 @@ class Captions {
   /** 变速回调函数 */
   _speedChangeCallback(speed) {
     for (let [, value] of this.captionsMap) {
-      const audio = value.audio
-      audio.playbackRate = speed
+      const audio = value.audio;
+      audio.playbackRate = speed;
     }
   }
 
@@ -483,13 +520,14 @@ class Captions {
   /** 创建文字标签 */
   _createCaptionsDiv(cesiumContainer) {
     /** 创建 Dom */
-    const dom = document.createElement("div")
+    const dom = document.createElement("div");
     /** 设置 Dom id */
-    dom.id = "cesium-helper-caption"
+    dom.id = "cesium-helper-caption";
     /** 创建样式 */
-    const style = document.createElement("style")
+    const style = document.createElement("style");
     /** 设置样式 */
-    style.innerHTML = "#cesium-helper-caption{\n" +
+    style.innerHTML =
+      "#cesium-helper-caption{\n" +
       "  width:90%;\n" +
       "  font-size: 30px;\n" +
       "  letter-spacing: .05em;\n" +
@@ -503,10 +541,10 @@ class Captions {
       "  transform: translateX(-50%);\n" +
       "\n" +
       "  text-align: center;\n" +
-      "}"
-    this.textContainer = dom
-    cesiumContainer.appendChild(style)
-    cesiumContainer.appendChild(dom)
+      "}";
+    this.textContainer = dom;
+    cesiumContainer.appendChild(style);
+    cesiumContainer.appendChild(dom);
   }
 
   /**
@@ -525,12 +563,12 @@ class Captions {
 
   /** 生成音频标签组 */
   _createAudioGroupContainer(cesiumContainer) {
-    const dom = document.createElement("div")
-    dom.style.display = "none"
-    dom.className = "cesium-helper-captions-audio-wrapper"
-    cesiumContainer.appendChild(dom)
-    this.audioGroupContainer = dom
-    return dom
+    const dom = document.createElement("div");
+    dom.style.display = "none";
+    dom.className = "cesium-helper-captions-audio-wrapper";
+    cesiumContainer.appendChild(dom);
+    this.audioGroupContainer = dom;
+    return dom;
   }
 
   /**
@@ -553,18 +591,17 @@ class Captions {
 
   /** 创建音频标签 */
   _createAudioContainer(url) {
-    const dom = document.createElement("audio")
-    dom.src = url
-    dom.autoplay = false
-    dom.preload = "auto"
-    dom.playbackRate = this.supper.player.speed
-    this.audioGroupContainer.appendChild(dom)
+    const dom = document.createElement("audio");
+    dom.src = url;
+    dom.autoplay = false;
+    dom.preload = "auto";
+    dom.playbackRate = this.supper.player.speed;
+    this.audioGroupContainer.appendChild(dom);
     return new Promise((resolve, reject) => {
-      dom.addEventListener("loadedmetadata", () => resolve(dom))
-      dom.onerror = () => reject(url)
-    })
+      dom.addEventListener("loadedmetadata", () => resolve(dom));
+      dom.onerror = () => reject(url);
+    });
   }
-
 }
 
-export default Captions
+export default Captions;

@@ -1,4 +1,4 @@
-const Cesium = window.Cesium
+const Cesium = window.Cesium;
 
 /**
  * 获取当前时间，并将其格式化为ISO 8601时间区间
@@ -9,11 +9,19 @@ const Cesium = window.Cesium
  */
 
 export function julianDateToIso8602Times(time, second) {
-    second = second || 5
-    // 增加五秒
-    const newTime =  Cesium.JulianDate.addSeconds(time, second, new Cesium.JulianDate())
-    // 格式化成"2000-01-01T00:00:00Z/2000-01-01T00:00:05Z"
-    return Cesium.JulianDate.toIso8601(time, 6) + "/" + Cesium.JulianDate.toIso8601(newTime, 6)
+  second = second || 5;
+  // 增加五秒
+  const newTime = Cesium.JulianDate.addSeconds(
+    time,
+    second,
+    new Cesium.JulianDate()
+  );
+  // 格式化成"2000-01-01T00:00:00Z/2000-01-01T00:00:05Z"
+  return (
+    Cesium.JulianDate.toIso8601(time, 6) +
+    "/" +
+    Cesium.JulianDate.toIso8601(newTime, 6)
+  );
 }
 
 /**
@@ -24,12 +32,14 @@ export function julianDateToIso8602Times(time, second) {
  */
 
 export function iso8602TimesToJulianDate(iso8601TimeRange) {
-    const start = iso8601TimeRange.split("/")[0]
-    const stop = iso8601TimeRange.split("/")[1]
-    return new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
-        start: Cesium.JulianDate.fromIso8601(start),
-        stop: Cesium.JulianDate.fromIso8601(stop)
-    })])
+  const start = iso8601TimeRange.split("/")[0];
+  const stop = iso8601TimeRange.split("/")[1];
+  return new Cesium.TimeIntervalCollection([
+    new Cesium.TimeInterval({
+      start: Cesium.JulianDate.fromIso8601(start),
+      stop: Cesium.JulianDate.fromIso8601(stop),
+    }),
+  ]);
 }
 
 /**
@@ -40,16 +50,20 @@ export function iso8602TimesToJulianDate(iso8601TimeRange) {
  */
 
 export function availabilityToTimes(availability) {
-    let startTime = null;
-    let endTime = null;
+  let startTime = null;
+  let endTime = null;
 
-    if (availability && availability.length > 0) {
-        const interval = availability.get(0);
-        startTime = Cesium.JulianDate.toIso8601(interval.start).replace('T', ' ').replace("Z", "");
-        endTime = Cesium.JulianDate.toIso8601(interval.stop).replace('T', ' ').replace("Z", "");
-    }
+  if (availability && availability.length > 0) {
+    const interval = availability.get(0);
+    startTime = Cesium.JulianDate.toIso8601(interval.start)
+      .replace("T", " ")
+      .replace("Z", "");
+    endTime = Cesium.JulianDate.toIso8601(interval.stop)
+      .replace("T", " ")
+      .replace("Z", "");
+  }
 
-    return {startTime, endTime};
+  return { startTime, endTime };
 }
 
 /**
@@ -59,8 +73,11 @@ export function availabilityToTimes(availability) {
  * @returns {string} 返回ISO 8601格式的时间字符串
  */
 
-export function julianDateToIso8601(julianTime){
-    return parseDateToString("YYYY-MM-DDThh:mm:ss.fffZ", julianDateToDate(julianTime))
+export function julianDateToIso8601(julianTime) {
+  return parseDateToString(
+    "YYYY-MM-DDThh:mm:ss.fffZ",
+    julianDateToDate(julianTime)
+  );
 }
 /**
  * JulianDate格式时间转Date
@@ -69,10 +86,10 @@ export function julianDateToIso8601(julianTime){
  * @returns {Date} 返回转换后的JavaScript Date对象，已减去8小时时差
  */
 
-export function julianDateToDate(julianTime){
-    const date = Cesium.JulianDate.toDate(julianTime);
-    date.setHours(date.getHours() - 8)
-    return date
+export function julianDateToDate(julianTime) {
+  const date = Cesium.JulianDate.toDate(julianTime);
+  date.setHours(date.getHours() - 8);
+  return date;
 }
 
 /**
@@ -82,8 +99,8 @@ export function julianDateToDate(julianTime){
  * @returns {Cesium.JulianDate} 返回转换后的JulianDate对象
  */
 
-export function julianDateFromIso8601(iso8601){
-    return Cesium.JulianDate.fromIso8601(iso8601);
+export function julianDateFromIso8601(iso8601) {
+  return Cesium.JulianDate.fromIso8601(iso8601);
 }
 /**
  * Date 转化为指定格式的时间字符串
@@ -93,41 +110,38 @@ export function julianDateFromIso8601(iso8601){
  * @returns {string} 返回格式化后的时间字符串
  */
 
-export function parseDateToString(format, dateTime){
-    const date = new Date(dateTime)
-    let str = format
-    str = str.replace(/yyyy|YYYY/, date.getFullYear())
-    str = str.replace(
-        /MM/,
-        date.getMonth() > 9
-            ? (date.getMonth() + 1).toString()
-            : "0" + (date.getMonth() + 1)
-    );
-    str = str.replace(
-        /dd|DD/,
-        date.getDate() > 9 ? date.getDate().toString() : "0" + date.getDate()
-    );
-    str = str.replace(
-        /hh|HH/,
-        date.getHours() > 9 ? date.getHours().toString() : "0" + date.getHours()
-    );
-    str = str.replace(
-        /mm/,
-        date.getMinutes() > 9
-            ? date.getMinutes().toString()
-            : "0" + date.getMinutes()
-    );
-    str = str.replace(
-        /ss|SS/,
-        date.getSeconds() > 9
-            ? date.getSeconds().toString()
-            : "0" + date.getSeconds()
-    );
-    str = str.replace(
-        /fff|FFF/,
-        date.getMilliseconds()
-    );
-    return str;
+export function parseDateToString(format, dateTime) {
+  const date = new Date(dateTime);
+  let str = format;
+  str = str.replace(/yyyy|YYYY/, date.getFullYear());
+  str = str.replace(
+    /MM/,
+    date.getMonth() > 9
+      ? (date.getMonth() + 1).toString()
+      : "0" + (date.getMonth() + 1)
+  );
+  str = str.replace(
+    /dd|DD/,
+    date.getDate() > 9 ? date.getDate().toString() : "0" + date.getDate()
+  );
+  str = str.replace(
+    /hh|HH/,
+    date.getHours() > 9 ? date.getHours().toString() : "0" + date.getHours()
+  );
+  str = str.replace(
+    /mm/,
+    date.getMinutes() > 9
+      ? date.getMinutes().toString()
+      : "0" + date.getMinutes()
+  );
+  str = str.replace(
+    /ss|SS/,
+    date.getSeconds() > 9
+      ? date.getSeconds().toString()
+      : "0" + date.getSeconds()
+  );
+  str = str.replace(/fff|FFF/, date.getMilliseconds());
+  return str;
 }
 
 /**
@@ -138,8 +152,8 @@ export function parseDateToString(format, dateTime){
  * @returns {Date} 返回n秒后的时间
  */
 
-export function dateDistance(startDate, second){
-    const date = new Date(startDate)
-    date.setSeconds(date.getSeconds()+second)
-    return date
+export function dateDistance(startDate, second) {
+  const date = new Date(startDate);
+  date.setSeconds(date.getSeconds() + second);
+  return date;
 }
